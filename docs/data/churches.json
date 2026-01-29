@@ -1,0 +1,317 @@
+{
+  "kirchenkreis": "Evangelischer Kirchenkreis Hamm",
+  "gottesdienstorte": [
+    {
+      "name": "Christuskirche",
+      "photoName": "christuskirche.jpg",
+      "stadtteil": "Hamm-Westen / Lange Reihe",
+      "address": {
+        "street": "Friedrich-Ebert-Str. 5",
+        "zipCode": "59063",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6805,
+        "lng": 7.8082
+      },
+      "besonderheiten": [
+        "Wenig Parkplätze",
+        "Kein Konfetti"
+      ]
+    },
+    {
+      "name": "Pauluskirche",
+      "photoName": "pauluskirche.jpg",
+      "stadtteil": "Hamm-Mitte",
+      "address": {
+        "street": "Marktplatz",
+        "zipCode": "59065",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6813,
+        "lng": 7.8196
+      }
+    },
+    {
+      "name": "Lutherkirche",
+      "photoName": "lutherkirche.jpg",
+      "stadtteil": "Hamm-Süden/Mitte",
+      "address": {
+        "street": "Nassauerstraße",
+        "zipCode": "59065",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6798,
+        "lng": 7.8157
+      }
+    },
+    {
+      "name": "Martin-Luther-Kirche",
+      "photoName": "martin_luther_kirche_werne.jpg",
+      "stadtteil": "Werne",
+      "address": {
+        "street": "Wichernstraße 1",
+        "zipCode": "59368",
+        "city": "Werne"
+      },
+      "coordinates": {
+        "lat": 51.6625,
+        "lng": 7.6360
+      }
+    },
+    {
+      "name": "Kapelle Stockum (Ida-Kapelle)",
+      "photoName": "kapelle_stockum.jpg",
+      "stadtteil": "Werne-Stockum",
+      "address": {
+        "street": "Boymerstraße",
+        "zipCode": "59368",
+        "city": "Werne"
+      },
+      "coordinates": {
+        "lat": 51.6865,
+        "lng": 7.6980
+      }
+    },
+    {
+      "name": "Auferstehungskirche Herbern",
+      "photoName": "auferstehungskirche_herbern.jpg",
+      "stadtteil": "Herbern (Ascheberg)",
+      "address": {
+        "street": "Ostlandstraße 9",
+        "zipCode": "59387",
+        "city": "Ascheberg"
+      },
+      "coordinates": {
+        "lat": 51.7395,
+        "lng": 7.6580
+      }
+    },
+    {
+      "name": "Kreuzkirche",
+      "photoName": "kreuzkirche.jpg",
+      "stadtteil": "Bockum-Hövel (Bockum)",
+      "address": {
+        "street": "Hammer Straße 136",
+        "zipCode": "59075",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6980,
+        "lng": 7.7650
+      }
+    },
+    {
+      "name": "Auferstehungskirche Hövel",
+      "photoName": "auferstehungskirche_hoevel.jpg",
+      "stadtteil": "Bockum-Hövel (Hövel)",
+      "address": {
+        "street": "Uphofstraße 36",
+        "zipCode": "59075",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.7150,
+        "lng": 7.7850
+      }
+    },
+    {
+      "name": "Versöhnungskirche",
+      "photoName": "versoehnungskirche.jpg",
+      "stadtteil": "Heessen",
+      "address": {
+        "street": "Hohekamp 8",
+        "zipCode": "59073",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.7084,
+        "lng": 7.8117
+      }
+    },
+    {
+      "name": "Gellert-Haus",
+      "photoName": "gellert_haus.jpg",
+      "stadtteil": "Heessen (Dasbeck/Gartenstadt)",
+      "address": {
+        "street": "Immanuel-Kant-Straße 21",
+        "zipCode": "59073",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.7004,
+        "lng": 7.8385
+      }
+    },
+    {
+      "name": "Paul-Gerhardt-Haus",
+      "photoName": "paul_gerhardt_haus_dolberg.jpg",
+      "stadtteil": "Dolberg (Ahlen)",
+      "address": {
+        "street": "Im Eichengrund",
+        "zipCode": "59229",
+        "city": "Ahlen"
+      },
+      "coordinates": {
+        "lat": 51.7160,
+        "lng": 7.9150
+      }
+    },
+    {
+      "name": "Evangelische Kirche Uentrop",
+      "photoName": "kirche_uentrop.jpg",
+      "stadtteil": "Uentrop",
+      "address": {
+        "street": "Gonigon 2",
+        "zipCode": "59071",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6938,
+        "lng": 7.9473
+      }
+    },
+    {
+      "name": "Erlöserkirche (ehem. Thomaskirche)",
+      "photoName": "erloeserkirche_werries.jpg",
+      "stadtteil": "Werries",
+      "address": {
+        "street": "Braamer Straße 38",
+        "zipCode": "59071",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6850,
+        "lng": 7.8750
+      }
+    },
+    {
+      "name": "Pankratiuskirche",
+      "photoName": "pankratiuskirche.jpg",
+      "stadtteil": "Mark",
+      "address": {
+        "street": "An der Pankratiuskirche",
+        "zipCode": "59071",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6830,
+        "lng": 7.8524
+      }
+    },
+    {
+      "name": "Lukaskirche",
+      "photoName": "lukaskirche.jpg",
+      "stadtteil": "Braam-Ostwennemar",
+      "address": {
+        "street": "Binderstraße",
+        "zipCode": "59071",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6920,
+        "lng": 7.8650
+      }
+    },
+    {
+      "name": "Gnadenkirche",
+      "photoName": "gnadenkirche.jpg",
+      "stadtteil": "Wiescherhöfen",
+      "address": {
+        "street": "Kamelstraße",
+        "zipCode": "59077",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6520,
+        "lng": 7.7850
+      }
+    },
+    {
+      "name": "Evangelische Kirche Herringen",
+      "photoName": "kirche_herringen.jpg",
+      "stadtteil": "Herringen",
+      "address": {
+        "street": "Fangstraße 3",
+        "zipCode": "59077",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6605,
+        "lng": 7.7417
+      }
+    },
+    {
+      "name": "Paul-Gerhardt-Kirche",
+      "photoName": "paul_gerhardt_kirche_pelkum.jpg",
+      "stadtteil": "Pelkum",
+      "address": {
+        "street": "Kamener Straße",
+        "zipCode": "59077",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6450,
+        "lng": 7.7300
+      }
+    },
+    {
+      "name": "Friedenskirche",
+      "photoName": "friedenskirche.jpg",
+      "stadtteil": "Selmigerheide",
+      "address": {
+        "street": "Krimstraße",
+        "zipCode": "59077",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6406,
+        "lng": 7.7833
+      }
+    },
+    {
+      "name": "Kirche zu Berge",
+      "photoName": "kirche_zu_berge.jpg",
+      "stadtteil": "Berge",
+      "address": {
+        "street": "Hellweg 147",
+        "zipCode": "59069",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6499,
+        "lng": 7.8245
+      }
+    },
+    {
+      "name": "Stephanuskirche",
+      "photoName": "stephanuskirche.jpg",
+      "stadtteil": "Westtünnen",
+      "address": {
+        "street": "Dietrich-Bonhoeffer-Straße 5",
+        "zipCode": "59069",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6650,
+        "lng": 7.8350
+      }
+    },
+    {
+      "name": "Evangelische Kirche Rhynern",
+      "photoName": "kirche_rhynern.jpg",
+      "stadtteil": "Rhynern",
+      "address": {
+        "street": "Alte Salzstraße 6",
+        "zipCode": "59069",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.6307,
+        "lng": 7.8561
+      }
+    }
+  ]
+}
