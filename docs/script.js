@@ -23,12 +23,21 @@ const createPopupContent = (church) => {
         ? `images/churches/${church.photoName}`
         : 'images/placeholder.webp';
     
+    const imageElement = church.website
+        ? `<a href="${church.website}" target="_blank" rel="noopener noreferrer" class="popup-image-link">
+               <img src="${imagePath}" 
+                    alt="${church.name}"
+                    loading="lazy"
+                    onerror="this.src='images/placeholder.webp'">
+           </a>`
+        : `<img src="${imagePath}" 
+                alt="${church.name}"
+                loading="lazy"
+                onerror="this.src='images/placeholder.webp'">`;
+    
     return `
         <div class="teardrop-popup">
-            <img src="${imagePath}" 
-                 alt="${church.name}"
-                 loading="lazy"
-                 onerror="this.src='images/placeholder.webp'">
+            ${imageElement}
         </div>
     `;
 };
@@ -59,8 +68,22 @@ const updateInfoBox = (church) => {
     
     const features = church.besonderheiten && church.besonderheiten.length > 0 
         ? `<div class="info-features">
-             <ul>${church.besonderheiten.map(f => `<li>${f}</li>`).join('')}</ul>
+             <ul>${church.besonderheiten.map(f => {
+                 // Unterstützt sowohl String als auch Objekt mit {text, emoji}
+                 if (typeof f === 'string') {
+                     return `<li>${f}</li>`;
+                 } else {
+                     const emoji = f.emoji || '';
+                     return `<li data-emoji="${emoji}">${f.text}</li>`;
+                 }
+             }).join('')}</ul>
            </div>`
+        : '';
+    
+    const websiteButton = church.website
+        ? `<a href="${church.website}" target="_blank" rel="noopener noreferrer" class="info-website-button">
+               Weitere Infos
+           </a>`
         : '';
     
     infoBox.innerHTML = `
@@ -71,6 +94,7 @@ const updateInfoBox = (church) => {
             <div>${church.address.zipCode} ${church.address.city}</div>
         </div>
         ${features}
+        ${websiteButton}
     `;
     infoBox.parentElement.classList.add('active');
 };

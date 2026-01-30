@@ -1,0 +1,262 @@
+{
+  "kirchenkreis": "Evangelischer Kirchenkreis Hamm",
+  "status_check_date": "2026-01",
+  "gottesdienstorte": [
+    {
+      "name": "Pauluskirche",
+      "photoName": "Pauluskirche.webp",
+      "stadtteil": "Hamm-Mitte",
+      "address": {
+        "street": "Marktplatz 16",
+        "zipCode": "59065",
+        "city": "Hamm"
+      },
+      "note": "Zentrale Marktkirche",
+      "website": "https://www.evangelische-kirchengemeinde-hamm.de/orte/pauluskirche",
+      "coordinates": {
+        "lat": 51.6813,
+        "lng": 7.8196
+      }
+    },
+    {
+      "name": "Christuskirche",
+      "photoName": "christuskirche.webp",
+      "stadtteil": "Hamm-Westen",
+      "address": {
+        "street": "Lange Straße 72",
+        "zipCode": "59067",
+        "city": "Hamm"
+      },
+      "note": "Ecke Friedrich-Ebert-Straße",
+      "website": "https://www.evangelische-kirchengemeinde-hamm.de/orte/christuskirche-und-gemeindezentrum",
+      "coordinates": {
+        "lat": 51.6805,
+        "lng": 7.8082
+      }
+    },
+    {
+      "name": "Lutherkirche (Jugendkirche)",
+      "photoName": "lutherkirche.jpg",
+      "stadtteil": "Hamm-Süden",
+      "address": {
+        "street": "Westhofenstraße 2",
+        "zipCode": "59065",
+        "city": "Hamm"
+      },
+      "note": "Eingang gegenüber dem Park, Ecke Nassauerstraße",
+      "website": "https://www.ev-jugend-hamm.de/jugendkirche",
+      "coordinates": {
+        "lat": 51.6798,
+        "lng": 7.8157
+      }
+    },
+    {
+      "name": "Johanneskirche",
+      "photoName": "johanneskirche.webp",
+      "stadtteil": "Hamm-Norden",
+      "address": {
+        "street": "An der Johanneskirche 24",
+        "zipCode": "59065",
+        "city": "Hamm"
+      },
+      "website": "https://www.evangelische-kirchengemeinde-hamm.de/orte/johanneskirche-und-martin-berthold-haus",
+      "coordinates": {
+        "lat": 51.6890,
+        "lng": 7.8250
+      }
+    },
+    {
+      "name": "Pankratiuskirche",
+      "photoName": "pankratiuskirche.webp",
+      "stadtteil": "Mark",
+      "address": {
+        "street": "Marker Kirchplatz 5",
+        "zipCode": "59071",
+        "city": "Hamm"
+      },
+      "website": "https://www.kg-mw.de",
+      "coordinates": {
+        "lat": 51.6830,
+        "lng": 7.8524
+      }
+    },
+    {
+      "name": "Erlöserkirche",
+      "photoName": "erloeserkirche.webp",
+      "stadtteil": "Werries",
+      "address": {
+        "street": "Braamer Straße 38",
+        "zipCode": "59071",
+        "city": "Hamm"
+      },
+      "website": "https://www.evangelische-kirchengemeinde-hamm.de/orte/erloeserzentrum",
+      "coordinates": {
+        "lat": 51.6850,
+        "lng": 7.8750
+      }
+    },
+    {
+      "name": "Uentroper Dorfkirche",
+      "photoName": "uentroper-dorfkirche.webp",
+      "stadtteil": "Uentrop",
+      "address": {
+        "street": "An der Uentroper Kirche 12",
+        "zipCode": "59071",
+        "city": "Hamm"
+      },
+      "website": "https://www.evangelische-kirchengemeinde-hamm.de",
+      "coordinates": {
+        "lat": 51.6938,
+        "lng": 7.9473
+      }
+    },
+    {
+      "name": "Versöhnungskirche",
+      "photoName": "versoehnungskirche.webp",
+      "stadtteil": "Heessen",
+      "address": {
+        "street": "Hohekamp 8",
+        "zipCode": "59073",
+        "city": "Hamm"
+      },
+      "website": "https://evangelisch-in-heessen.de",
+      "coordinates": {
+        "lat": 51.7084,
+        "lng": 7.8117
+      }
+    },
+    {
+      "name": "Kreuzkirche",
+      "photoName": "kreuzkirche.webp",
+      "stadtteil": "Bockum-Hövel (Bockum)",
+      "address": {
+        "street": "Hammer Straße 140",
+        "zipCode": "59075",
+        "city": "Hamm"
+      },
+      "website": "https://www.ev-bockum-hoevel.de"
+    },
+    {
+      "name": "Auferstehungskirche",
+      "photoName": "auferstehungskirche.webp",
+      "stadtteil": "Bockum-Hövel (Hövel)",
+      "address": {
+        "street": "Uphofstraße 36",
+        "zipCode": "59075",
+        "city": "Hamm"
+      },
+      "website": "https://www.ev-bockum-hoevel.de"
+    },
+    {
+      "name": "St. Viktor (Ev. Kirche Herringen)",
+      "photoName": "st-viktor-herringen.webp",
+      "stadtteil": "Herringen",
+      "address": {
+        "street": "Fangstraße 3",
+        "zipCode": "59077",
+        "city": "Hamm"
+      },
+      "website": "https://www.st-victor-herringen.de",
+      "coordinates": {
+        "lat": 51.6605,
+        "lng": 7.7417
+      }
+    },
+    {
+      "name": "Jakobuskirche",
+      "photoName": "jakobuskirche.webp",
+      "stadtteil": "Pelkum",
+      "address": {
+        "street": "Pelkumer Kirchplatz 1",
+        "zipCode": "59077",
+        "city": "Hamm"
+      },
+      "website": "https://www.evkirche-pelkum-wiescherhoefen.de"
+    },
+    {
+      "name": "Friedenskirche",
+      "photoName": "friedenskirche.webp",
+      "stadtteil": "Selmigerheide",
+      "address": {
+        "street": "Friedhofsweg 60",
+        "zipCode": "59077",
+        "city": "Hamm"
+      },
+      "website": "https://www.evkirche-pelkum-wiescherhoefen.de"
+    },
+    {
+      "name": "Kirche zu Berge",
+      "photoName": "kirche-zu-berge.webp",
+      "stadtteil": "Berge",
+      "address": {
+        "street": "Hellweg 147",
+        "zipCode": "59069",
+        "city": "Hamm"
+      },
+      "website": "https://www.emmaus-hamm.de"
+    },
+    {
+      "name": "Evangelische Kirche Rhynern",
+      "photoName": "evangelische-kirche-rhynern.webp",
+      "stadtteil": "Rhynern",
+      "address": {
+        "street": "Alte Salzstraße 6",
+        "zipCode": "59069",
+        "city": "Hamm"
+      },
+      "website": "https://www.emmaus-hamm.de"
+    },
+    {
+      "name": "Martin-Luther-Kirche",
+      "photoName": "martin-luther-kirche.webp",
+      "stadtteil": "Werne",
+      "address": {
+        "street": "Wichernstraße 1",
+        "zipCode": "59368",
+        "city": "Werne"
+      },
+      "website": "https://www.evkirchewerne.de"
+    },
+    {
+      "name": "Kapelle Stockum (Ida-Kapelle)",
+      "photoName": "kapelle-stockum.webp",
+      "stadtteil": "Werne-Stockum",
+      "address": {
+        "street": "Boymerstraße 3",
+        "zipCode": "59368",
+        "city": "Werne"
+      },
+      "website": "https://www.evkirchewerne.de"
+    },
+    {
+      "name": "Auferstehungskirche Herbern",
+      "photoName": "auferstehungskirche-herbern.webp",
+      "stadtteil": "Herbern (Ascheberg)",
+      "address": {
+        "street": "Ostlandstraße 9",
+        "zipCode": "59387",
+        "city": "Ascheberg"
+      },
+      "website": "https://www.evkirchewerne.de",
+      "coordinates": {
+        "lat": 51.7395,
+        "lng": 7.6580
+      }
+    },
+    {
+      "name": "Gemeindezentrum Dolberg",
+      "photoName": "gemeindezentrum-dolberg.webp",
+      "stadtteil": "Dolberg (Ahlen)",
+      "address": {
+        "street": "Im Eichengrund 13",
+        "zipCode": "59229",
+        "city": "Ahlen"
+      },
+      "website": "https://evkircheahlen.de",
+      "coordinates": {
+        "lat": 51.7160,
+        "lng": 7.9150
+      }
+    }
+  ]
+}

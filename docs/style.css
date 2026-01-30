@@ -40,6 +40,7 @@ body {
     background: #f0f0f0;
     border: 6px solid #10b981;
     box-sizing: border-box;
+    position: relative;
 }
 
 .teardrop-popup img {
@@ -141,7 +142,7 @@ body {
 .info-address {
     margin-bottom: 16px;
     font-size: 14px;
-    color: #4b5563;
+    color: #1f2937;
     line-height: 1.6;
 }
 
@@ -162,22 +163,69 @@ body {
 
 .info-features li {
     font-size: 13px;
-    color: #6b7280;
+    color: #374151;
     margin-bottom: 6px;
     padding-left: 20px;
     position: relative;
 }
 
 .info-features li:before {
-    content: "✓";
+    content: "•";
     position: absolute;
     left: 0;
     color: #10b981;
     font-weight: bold;
+    font-size: 16px;
+}
+
+.info-features li[data-emoji]:before {
+    content: attr(data-emoji);
+    font-weight: normal;
+    font-size: 14px;
 }
 
 .info-features li:last-child {
     margin-bottom: 0;
+}
+
+/* Website Button in Info-Box */
+.info-website-button {
+    display: block;
+    margin-top: 16px;
+    padding: 10px 16px;
+    background: #10b981;
+    color: white !important;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.info-website-button:hover {
+    background: #059669;
+    color: white !important;
+}
+
+/* Popup-Bild klickbar */
+.popup-image-link {
+    display: block;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.popup-image-link img {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: rotate(45deg) scale(1.5);
+    transform-origin: center;
 }
 
 /* Legende unten links */
