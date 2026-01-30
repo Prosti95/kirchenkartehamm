@@ -1,0 +1,16 @@
+Platzhalter für stilisierte Karte
+
+Benötigte Datei: custom-map.png oder custom-map.svg
+Empfohlenes Format: PNG oder SVG
+Empfohlene Größe: ~2000x2000 Pixel für gute Qualität
+
+Die Karte sollte die Region Hamm + Umgebung (Werne, Ahlen, Sendenhorst, Drensteinfurt, Ascheberg) abdecken.
+
+Geografische Bounds (ungefähr):
+- Nord: 51.85° (oberhalb Sendenhorst)
+- Süd: 51.55° (unterhalb Bönen)
+- West: 7.55° (westlich von Werne)
+- Ost: 8.10° (östlich von Ahlen)
+
+Hinweis: Die Bounds können in script.js (imageBounds Variable) angepasst werden, 
+um die Karte korrekt zu positionieren.

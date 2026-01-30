@@ -333,12 +333,17 @@ const initMap = async () => {
         dragging: true
     });
     
-    // Tile Layer hinzufügen (CartoDB Light No Labels - sehr simpel)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 19
+    // Stilisierte Hintergrundkarte als Image Overlay
+    // Bounds für die Bildpositionierung (wird nach GeoJSON-Laden angepasst)
+    const imageBounds = [[51.55, 7.55], [51.85, 8.10]]; // Vorläufige Bounds
+    
+    const imageOverlay = L.imageOverlay('images/custom-map.png', imageBounds, {
+        opacity: 1.0,
+        interactive: false
     }).addTo(map);
+    
+    // Optional: Weißer Hintergrund für Bereiche außerhalb des Bildes
+    map.getContainer().style.backgroundColor = '#f5f5f5';
     
     // Zoom-Controls unten rechts positionieren
     L.control.zoom({
