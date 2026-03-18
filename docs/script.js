@@ -85,6 +85,12 @@ const updateInfoBox = (church) => {
                Weitere Infos
            </a>`
         : '';
+
+    const bookingButton = church.buchungsLink
+        ? `<a href="${church.buchungsLink}" target="_blank" rel="noopener noreferrer" class="info-website-button">
+               Zum Buchungskalender
+           </a>`
+        : '';
     
     infoBox.innerHTML = `
         <button class="info-box-close" onclick="closeInfoBox()">&times;</button>
@@ -95,6 +101,7 @@ const updateInfoBox = (church) => {
         </div>
         ${features}
         ${websiteButton}
+        ${bookingButton}
     `;
     infoBox.parentElement.classList.add('active');
 };
