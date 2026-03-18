@@ -195,23 +195,19 @@ const loadChurches = async () => {
 // Alle Stadtgrenzen mit GeoJSON Boundaries
 async function addRegionHighlight() {
     try {
-        // Alle 6 GeoJSON-Dateien laden
-        const [hammResponse, werneResponse, ahlenResponse, sendenhorstResponse, drensteinfurtResponse, aschebergResponse] = await Promise.all([
+        // Nur die gewuenschten 4 GeoJSON-Dateien laden
+        const [hammResponse, werneResponse, ahlenResponse, sendenhorstResponse] = await Promise.all([
             fetch('data/hamm-boundary.geojson'),
             fetch('data/werne-boundary.geojson'),
             fetch('data/ahlen-boundary.geojson'),
-            fetch('data/sendenhorst-boundary.geojson'),
-            fetch('data/drensteinfurt-boundary.geojson'),
-            fetch('data/ascheberg-boundary.geojson')
+            fetch('data/sendenhorst-boundary.geojson')
         ]);
         const hammData = await hammResponse.json();
         const werneData = await werneResponse.json();
         const ahlenData = await ahlenResponse.json();
         const sendenhorstData = await sendenhorstResponse.json();
-        const drensteinfurtData = await drensteinfurtResponse.json();
-        const aschebergData = await aschebergResponse.json();
         
-        const allCities = [hammData, werneData, ahlenData, sendenhorstData, drensteinfurtData, aschebergData];
+        const allCities = [hammData, werneData, ahlenData, sendenhorstData];
         
         // Weltweite Box als äußerer Ring
         const worldBounds = [
@@ -255,7 +251,7 @@ async function addRegionHighlight() {
             pane: 'tilePane'
         }).addTo(map);
         
-        // Alle 6 Städte zu einem einzigen Polygon vereinen mit Turf.js
+        // Die 4 Staedte zu einem einzigen Polygon vereinen mit Turf.js
         let unionPolygon = null;
         
         allCities.forEach(cityData => {

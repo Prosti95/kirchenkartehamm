@@ -15,12 +15,12 @@
         "lng": 7.8196
       },
       "besonderheiten": [
-        "Zentrale Lage in der Fußgängerzone",
-        {"text": "Keine Parkplätze direkt am Haus", "emoji": "🚗"},
-        "Gotischer Hallenbau",
-        "Höchstes Gebäude der Innenstadt"
+        "Im Herzen von Hamm, das höchste Gebäude der Innenstadt",
+        "Kostenpflichtige Parkplätze auf dem nahegelegenen Santa-Monica-Platz"
       ],
-      "website": "https://www.evangelische-kirchengemeinde-hamm.de"
+      "website": "https://www.evangelische-kirchengemeinde-hamm.de",
+      "buchungsLink": "",
+      "photoName": "Pauluskirche Hamm.jpg"
     },
     {
       "name": "Christuskirche",
@@ -39,11 +39,13 @@
         "Großes Kirchenschiff",
         "Parkmöglichkeiten im Umfeld vorhanden"
       ],
-      "website": "https://www.evangelische-kirchengemeinde-hamm.de"
+      "website": "https://www.evangelische-kirchengemeinde-hamm.de",
+      "buchungsLink": "",
+      "photoName": "Christuskirche Hamm.jpg"
     },
     {
-      "name": "Lutherkirche (Jugendkirche)",
-      "stadtteil": "Hamm-Süden",
+      "name": "Ev. Jugendkirche Hamm (Lutherkirche)",
+      "stadtteil": "Hamm-Mitte",
       "address": {
         "street": "Westhofenstraße 2",
         "zipCode": "59065",
@@ -56,10 +58,11 @@
       "besonderheiten": [
         "Nutzung als Jugendkirche",
         "Moderne Licht- und Tontechnik",
-        "Parkplätze am Tierpark gegenüber",
         "Barrierefreier Zugang"
       ],
-      "website": "https://www.ev-jugend-hamm.de"
+      "website": "https://www.jugendkirche-hamm.de",
+      "buchungsLink": "",
+      "photoName": "Lutherkirche Hamm.jpg"
     },
     {
       "name": "Johanneskirche",
@@ -70,14 +73,15 @@
         "city": "Hamm"
       },
       "coordinates": {
-        "lat": 51.6890,
-        "lng": 7.8250
+        "lat": 51.689,
+        "lng": 7.825
       },
       "besonderheiten": [
-        "Angeschlossenes Gemeindezentrum",
-        "Ruhige Lage"
+        "Angeschlossenes Gemeindezentrum"
       ],
-      "website": "https://www.evangelische-kirchengemeinde-hamm.de"
+      "website": "https://www.evangelische-kirchengemeinde-hamm.de",
+      "buchungsLink": "",
+      "photoName": "Johanneskirche Hamm.jpg"
     },
     {
       "name": "Pankratiuskirche",
@@ -88,20 +92,22 @@
         "city": "Hamm"
       },
       "coordinates": {
-        "lat": 51.6830,
+        "lat": 51.683,
         "lng": 7.8524
       },
       "besonderheiten": [
         "Älteste Kirche in Hamm (Ursprünge 11. Jh.)",
         "Historische Wandmalereien",
-        "Sehr beliebte Hochzeitskirche",
         "Begrenzte Parkplätze am Kirchplatz",
-        "Kein Konfetti (Denkmalschutz)"
+        "Bis zu 220 Personen",
+        "Toilette nur im angrenzenden Restaurant"
       ],
-      "website": "https://www.kg-mw.de"
+      "website": "https://www.kg-mw.de",
+      "buchungsLink": "",
+      "photoName": "Pankratiuskirche Mark-Westtünnen.jpg"
     },
     {
-      "name": "Erlöserkirche",
+      "name": "Kinderkathedrale Werries (Erlöserkirche)",
       "stadtteil": "Werries",
       "address": {
         "street": "Braamer Straße 38",
@@ -109,10 +115,16 @@
         "city": "Hamm"
       },
       "coordinates": {
-        "lat": 51.6850,
-        "lng": 7.8750
+        "lat": 51.685,
+        "lng": 7.875
       },
-      "website": "https://www.evangelische-kirchengemeinde-hamm.de"
+      "besonderheiten": [
+        "Häufig Programm für Kinder im Kirchraum",
+        "Bis zu 300 Personen"
+      ],
+      "website": "https://www.trinitatis-hamm.ekvw.de/",
+      "buchungsLink": "",
+      "photoName": "Erlöserkirche Werries - Trinitatis-Kirchengemeinde.jpg"
     },
     {
       "name": "Uentroper Dorfkirche",
@@ -128,28 +140,11 @@
       },
       "besonderheiten": [
         "Historische Saalkirche (11. Jh.)",
-        "Landschaftlich schöne Lage",
-        "Kleiner Kirchhof"
+        "Bis zu 150 Personen"
       ],
-      "website": "https://www.evangelische-kirchengemeinde-hamm.de"
-    },
-    {
-      "name": "Versöhnungskirche",
-      "stadtteil": "Heessen",
-      "address": {
-        "street": "Hohekamp 8",
-        "zipCode": "59073",
-        "city": "Hamm"
-      },
-      "coordinates": {
-        "lat": 51.7084,
-        "lng": 7.8117
-      },
-      "besonderheiten": [
-        "Modernes Gebäude (60er Jahre)",
-        "Gute Parkmöglichkeiten"
-      ],
-      "website": "https://evangelisch-in-heessen.de"
+      "website": "https://www.trinitatis-hamm.ekvw.de/",
+      "buchungsLink": "",
+      "photoName": "Uentroper Dorfkirche - Trinitatis-Kirchengemeinde.jpg"
     },
     {
       "name": "Gellert-Haus",
@@ -164,10 +159,13 @@
         "lng": 7.8384
       },
       "besonderheiten": [
-        "Gemeindezentrum (keine klassische Kirche)",
-        "Familiengottesdienste"
+        "Gemeindezentrum mit Kirchraum",
+        "Barrierefrei",
+        "Bis zu 350 Personen"
       ],
-      "website": "https://evangelisch-in-heessen.de"
+      "website": "https://evangelisch-in-heessen.de",
+      "buchungsLink": "",
+      "photoName": "Gellert-Haus Heessen.jpg"
     },
     {
       "name": "Kreuzkirche",
@@ -178,14 +176,17 @@
         "city": "Hamm"
       },
       "coordinates": {
-        "lat": 51.6980,
-        "lng": 7.7650
+        "lat": 51.698,
+        "lng": 7.765
       },
       "besonderheiten": [
-        "Expressionistischer Backsteinbau",
-        "Direkt an der Hauptstraße"
+        "Platz für bis zu 400 Personen",
+        "Parkfläche gegenüber der Kirche",
+        "Barrierefrei"
       ],
-      "website": "https://www.ev-bockum-hoevel.de"
+      "website": "https://www.ev-bockum-hoevel.de",
+      "buchungsLink": "",
+      "photoName": "Kreuzkirche Bockum-Hövel.jpg"
     },
     {
       "name": "Auferstehungskirche",
@@ -196,10 +197,16 @@
         "city": "Hamm"
       },
       "coordinates": {
-        "lat": 51.7150,
-        "lng": 7.7850
+        "lat": 51.715,
+        "lng": 7.785
       },
-      "website": "https://www.ev-bockum-hoevel.de"
+      "besonderheiten": [
+        "Platz für bis zu 400 Personen",
+        "Barrierefrei"
+      ],
+      "website": "https://www.ev-bockum-hoevel.de",
+      "buchungsLink": "",
+      "photoName": "Auferstehungskirche Bockum-Hövel.jpg"
     },
     {
       "name": "St. Viktor (Ev. Kirche Herringen)",
@@ -216,9 +223,12 @@
       "besonderheiten": [
         "Historischer Kirchbau",
         "Zentral im Ortskern Herringen",
-        "Parkplätze am Marktplatz verfügbar"
+        "Parkplätze am Marktplatz verfügbar",
+        "Bis zu 250 Personen"
       ],
-      "website": "https://www.st-victor-herringen.de"
+      "website": "https://www.st-victor-herringen.de",
+      "buchungsLink": "",
+      "photoName": "St. Victor-Kirche Herringen.jpg"
     },
     {
       "name": "Jakobuskirche",
@@ -229,14 +239,15 @@
         "city": "Hamm"
       },
       "coordinates": {
-        "lat": 51.6450,
-        "lng": 7.7300
+        "lat": 51.645,
+        "lng": 7.73
       },
       "besonderheiten": [
-        "Historischer Ortskern Pelkum",
-        "Zentraler Gottesdienstort der Gemeinde"
+        "Im historischen Ortskern Pelkum"
       ],
-      "website": "https://www.evkirche-pelkum-wiescherhoefen.de"
+      "website": "https://www.evkirche-pelkum-wiescherhoefen.de",
+      "buchungsLink": "",
+      "photoName": "Jakobuskirche Pelkum-Wiescherhöfen.jpg"
     },
     {
       "name": "Friedenskirche",
@@ -251,10 +262,11 @@
         "lng": 7.7833
       },
       "besonderheiten": [
-        "Direkt am Friedhof gelegen",
-        "Ruhige Lage"
+        "Direkt am Friedhof gelegen"
       ],
-      "website": "https://www.evkirche-pelkum-wiescherhoefen.de"
+      "website": "https://www.evkirche-pelkum-wiescherhoefen.de",
+      "buchungsLink": "",
+      "photoName": "Friedenskirche Pelkum-Wiescherhöfen.jpg"
     },
     {
       "name": "Kirche zu Berge",
@@ -269,13 +281,15 @@
         "lng": 7.8245
       },
       "besonderheiten": [
-        "Erhöhte Lage auf dem 'Berge'",
-        "Historisch verbunden mit Haus Reck"
+        "Platz für bis zu 120 Personen",
+        "Eingeschränkt barrierefrei"
       ],
-      "website": "https://www.emmaus-hamm.de"
+      "website": "https://www.emmaus-hamm.de",
+      "buchungsLink": "",
+      "photoName": "Kirche Berge, Emmaus-Kirchengemeinde.jpg"
     },
     {
-      "name": "Evangelische Kirche Rhynern",
+      "name": "Evangelische Kirche zu Rhynern",
       "stadtteil": "Rhynern",
       "address": {
         "street": "Alte Salzstraße 6",
@@ -287,12 +301,13 @@
         "lng": 7.8561
       },
       "besonderheiten": [
-        "Denkmalgeschützt",
-        "Doppelkirchen-Ensemble (Kath. Kirche direkt nebenan)",
-        "Beliebt für Hochzeiten",
-        "Kein Konfetti (Denkmalschutz)"
+        "Fünfeckiger Kirchraum",
+        "Barrierefrei",
+        "Platz für bis zu 180 Personen"
       ],
-      "website": "https://www.emmaus-hamm.de"
+      "website": "https://www.emmaus-hamm.de",
+      "buchungsLink": "",
+      "photoName": "Kirche Rhynern, Emmaus-Kirchengemeinde.jpg"
     },
     {
       "name": "Kirche Drechen",
@@ -308,10 +323,13 @@
       },
       "besonderheiten": [
         "Kleine historische Dorfkirche",
-        "Ländliche Umgebung",
-        "Friedhof direkt an der Kirche"
+        "Friedhof direkt an der Kirche",
+        "Eingeschränkt barrierefrei",
+        "Platz für bis zu 80 Personen"
       ],
-      "website": "https://www.emmaus-hamm.de"
+      "website": "https://www.emmaus-hamm.de",
+      "buchungsLink": "",
+      "photoName": "Kirche Drechen, Emmaus-Kirchengemeinde.jpg"
     },
     {
       "name": "Kirche Hilbeck",
@@ -326,10 +344,13 @@
         "lng": 7.8647
       },
       "besonderheiten": [
-        "Dorfkirche",
+        "Im Herzen von Hilbeck",
+        "Platz für bis zu 130 Personen",
         "Parken am Straßenrand"
       ],
-      "website": "https://www.emmaus-hamm.de"
+      "website": "https://www.emmaus-hamm.de",
+      "buchungsLink": "",
+      "photoName": "Kirche Hilbeck, Emmaus-Kirchengemeinde.jpg"
     },
     {
       "name": "Martin-Luther-Kirche",
@@ -341,27 +362,15 @@
       },
       "coordinates": {
         "lat": 51.6625,
-        "lng": 7.6360
+        "lng": 7.636
       },
       "besonderheiten": [
         "Hauptkirche in Werne",
         "Großes Gemeindezentrum angeschlossen"
       ],
-      "website": "https://www.evkirchewerne.de"
-    },
-    {
-      "name": "Kapelle Stockum (Ida-Kapelle)",
-      "stadtteil": "Werne-Stockum",
-      "address": {
-        "street": "Boymerstraße 3",
-        "zipCode": "59368",
-        "city": "Werne"
-      },
-      "coordinates": {
-        "lat": 51.6865,
-        "lng": 7.6980
-      },
-      "website": "https://www.evkirchewerne.de"
+      "website": "https://www.evkirchewerne.de",
+      "buchungsLink": "",
+      "photoName": "Martin-Luther-Kirche Werne.jpg"
     },
     {
       "name": "Auferstehungskirche Herbern",
@@ -373,9 +382,11 @@
       },
       "coordinates": {
         "lat": 51.7395,
-        "lng": 7.6580
+        "lng": 7.658
       },
-      "website": "https://www.evkirchewerne.de"
+      "website": "https://www.evkirchewerne.de",
+      "buchungsLink": "",
+      "photoName": "Auferstehungskirche Herbern - Kgm. Werne.jpg"
     },
     {
       "name": "Pauluskirche Ahlen",
@@ -390,12 +401,14 @@
         "lng": 7.8957
       },
       "besonderheiten": [
-        "Größte evangelische Kirche in Ahlen",
-        "Liegt an der Fußgängerzone",
+        "Größte evangelische Kirche in Ahlen direkt an der Fußgängerzone",
         "Wenig Parkplätze direkt am Haus",
-        "Spätgotik/Neugotik Mix"
+        "Platz für bis zu 130 Personen",
+        "Barrierefrei"
       ],
-      "website": "https://www.evkircheahlen.de"
+      "website": "https://www.evkircheahlen.de",
+      "buchungsLink": "",
+      "photoName": "Pauluskirche Ahlen.jpg"
     },
     {
       "name": "Christuskirche Ahlen",
@@ -405,11 +418,18 @@
         "zipCode": "59229",
         "city": "Ahlen"
       },
+      "besonderheiten": [
+        "Wenig Parkplätze",
+        "Platz für bis zu 100 Personen",
+        "Barrierefrei"
+      ],
       "coordinates": {
         "lat": 51.7486,
         "lng": 7.8872
       },
-      "website": "https://www.evkircheahlen.de"
+      "website": "https://www.evkircheahlen.de",
+      "buchungsLink": "",
+      "photoName": ""
     },
     {
       "name": "Paul-Gerhardt-Kirche",
@@ -419,42 +439,18 @@
         "zipCode": "59229",
         "city": "Ahlen"
       },
+      "besonderheiten": [
+        "Wenig Parkplätze",
+        "Platz für bis zu 120 Personen",
+        "Barrierefrei"
+      ],
       "coordinates": {
         "lat": 51.7672,
         "lng": 7.9257
       },
-      "website": "https://www.evkircheahlen.de"
-    },
-    {
-      "name": "Gemeindezentrum Dolberg",
-      "stadtteil": "Dolberg (Ahlen)",
-      "address": {
-        "street": "Im Eichengrund 13",
-        "zipCode": "59229",
-        "city": "Ahlen"
-      },
-      "coordinates": {
-        "lat": 51.7160,
-        "lng": 7.9150
-      },
-      "website": "https://www.evkircheahlen.de"
-    },
-    {
-      "name": "Nicolaikirche",
-      "stadtteil": "Vorhelm (Ahlen)",
-      "address": {
-        "street": "Agnes-Miegel-Straße 14",
-        "zipCode": "59227",
-        "city": "Ahlen"
-      },
-      "coordinates": {
-        "lat": 51.8031,
-        "lng": 7.9394
-      },
-      "besonderheiten": [
-        "Kleine Dorfkirche"
-      ],
-      "website": "https://www.ev-sendenhorst-vorhelm.de"
+      "website": "https://www.evkircheahlen.de",
+      "buchungsLink": "",
+      "photoName": "Paul-Gerhardt-Kirche Ahlen.jpg"
     },
     {
       "name": "Friedenskirche",
@@ -465,28 +461,12 @@
         "city": "Sendenhorst"
       },
       "coordinates": {
-        "lat": 51.8400,
+        "lat": 51.84,
         "lng": 7.8266
       },
-      "website": "https://www.ev-sendenhorst-vorhelm.de"
-    },
-    {
-      "name": "Paul-Gerhardt-Haus",
-      "stadtteil": "Walstedde (Drensteinfurt)",
-      "address": {
-        "street": "Böcken 16",
-        "zipCode": "48317",
-        "city": "Drensteinfurt"
-      },
-      "coordinates": {
-        "lat": 51.7640,
-        "lng": 7.7924
-      },
-      "besonderheiten": [
-        "Entwidmet (2021)",
-        "Keine regelmäßigen Gottesdienste mehr"
-      ],
-      "website": "https://www.evkircheahlen.de"
+      "website": "https://www.ev-sendenhorst-vorhelm.de",
+      "buchungsLink": "",
+      "photoName": "Friedenskirche Sendenhorst.jpg"
     },
     {
       "name": "Alte Kirche",
@@ -501,15 +481,16 @@
         "lng": 7.7774
       },
       "besonderheiten": [
-        "Historischer Baukern (12. Jh.)",
         "Ältestes Bauwerk in Bönen",
-        "Beliebte Traukirche",
-        "Kein Konfetti (Denkmalschutz)"
+        "Platz für bis zu 600 Personen",
+        "Barrierefrei"
       ],
-      "website": "https://www.evangelische-kirchengemeinde-boenen.de"
+      "website": "https://www.evangelische-kirchengemeinde-boenen.de",
+      "buchungsLink": "",
+      "photoName": "Alte Kirche Bönen.jpg"
     },
     {
-      "name": "Kirche Flierich",
+      "name": "Ev. Kirche Bönen-Flierich",
       "stadtteil": "Flierich (Bönen)",
       "address": {
         "street": "Fliericher Kirchplatz 9",
@@ -522,11 +503,107 @@
       },
       "besonderheiten": [
         "Einzigartiger Fachwerkturm",
-        "Malerischer Dorfplatz",
-        "Sehr beliebte Hochzeitskirche",
-        "Wenig Parkplätze direkt am Kirchplatz"
+        "Ausreichend Parkplätze am nahegelegenen Friedhof",
+        "Barrierefrei",
+        "Platz für bis zu 200 Personen"
       ],
-      "website": "https://www.evangelische-kirchengemeinde-boenen.de"
+      "website": "https://www.evangelische-kirchengemeinde-boenen.de",
+      "buchungsLink": "",
+      "photoName": "Kirche Flierich, Bönen.jpg"
+    },
+    {
+      "name": "Thomaskirche",
+      "stadtteil": "Pelkum",
+      "address": {
+        "street": "Lohauserholzstr. 18",
+        "zipCode": "59067",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.660094289243055,
+        "lng": 7.790238599999998
+      },
+      "besonderheiten": [
+        "Nutzung als ThomasKulturKirche"
+      ],
+      "website": "https://www.evkirche-pelkum-wiescherhoefen.de",
+      "buchungsLink": "",
+      "photoName": "Thomaskirche Pelkum-Wiescherhöfen.jpg"
+    },
+    {
+      "name": "Stephanuskirche",
+      "stadtteil": "Westtünnen",
+      "address": {
+        "street": "D.-Bonhoeffer-Str. 3",
+        "zipCode": "59069",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.65478111147173,
+        "lng": 7.854094494586492
+      },
+      "besonderheiten": [
+        "i.d.R. nicht für Taufen/ Trauungen oder Bestattungen genutzt"
+      ],
+      "website": "https://www.kg-mw.de",
+      "buchungsLink": "",
+      "photoName": "Stephanuskirche Mark-Westtünnen.jpg"
+    },
+    {
+      "name": "Katharina-Luther-Centrum",
+      "stadtteil": "Bockum-Hövel",
+      "address": {
+        "street": "Südgeist 24",
+        "zipCode": "59075",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.69122438920081,
+        "lng": 7.733436616286525
+      },
+      "besonderheiten": [
+        "Platz für bis zu 200 Personen",
+        "Barrierefrei"
+      ],
+      "website": "https://www.ev-bockum-hoevel.de",
+      "buchungsLink": "",
+      "photoName": "Katharina-Luther-Centrum Bockum-Hövel.jpg"
+    },
+    {
+      "name": "Gemeindezentrum Evenkamp",
+      "stadtteil": "Werne",
+      "address": {
+        "street": "Ostring 66",
+        "zipCode": "59368",
+        "city": "Werne"
+      },
+      "coordinates": {
+        "lat": 51.6661183797818,
+        "lng": 7.65167602609238
+      },
+      "website": "https://www.evkirchewerne.de",
+      "buchungsLink": "",
+      "photoName": "Gemeindezentrum Evenkamp Kgm. Werne.jpg"
+    },
+    {
+      "name": "Erlöserzentrum",
+      "stadtteil": "Hamm-Mitte",
+      "address": {
+        "street": "Anton-Voss-Straße 27a",
+        "zipCode": "59063",
+        "city": "Hamm"
+      },
+      "coordinates": {
+        "lat": 51.67522674941384,
+        "lng": 7.834816998841424
+      },
+      "besonderheiten": [
+        "Parkmöglichkeiten an der Anton-Voss-Straße",
+        "Barrierefrei"
+      ],
+      "website": "https://www.evkirchewerne.de",
+      "buchungsLink": "",
+      "photoName": "Hamm - Erlöserzentrum 24.jpg"
     }
   ]
 }
