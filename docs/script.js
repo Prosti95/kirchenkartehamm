@@ -183,22 +183,38 @@ const addMarkers = (churches) => {
         });
         
         marker.on('popupopen', function() {
-            // Pin etwas nach unten im Viewport verschieben, damit Teardrop darüber Platz hat
+            // Pin im Viewport verschieben, damit Teardrop weder von Info-Box noch vom Rand verdeckt wird
             setTimeout(() => {
                 const point = map.latLngToContainerPoint(marker.getLatLng());
                 const isMobile = window.innerWidth <= 768;
+                let panX = 0;
+                let panY = 0;
+
                 if (isMobile) {
                     // Mobile: Pin ganz nach unten
                     const targetY = window.innerHeight - 30;
-                    map.panBy([0, point.y - targetY], { animate: true, duration: 0.5 });
+                    panY = point.y - targetY;
                 } else {
-                    // Desktop: sanfter Versatz — Pin in untere 60% des Viewports
+                    // Desktop: vertikal — Pin mindestens bei 60% der Viewporthöhe
                     const targetY = window.innerHeight * 0.6;
-                    if (point.y < targetY) {
-                        // Pin ist schon weit genug unten, kein Pan nötig
-                        return;
+                    if (point.y > targetY) {
+                        panY = point.y - targetY;
                     }
-                    map.panBy([0, point.y - targetY], { animate: true, duration: 0.3 });
+
+                    // Desktop: horizontal — Teardrop (280px breit) darf nicht unter Info-Box liegen
+                    // Info-Box ist ~340px breit + 10px margin rechts, Teardrop ragt ~140px links vom Pin
+                    const infoBoxRight = 360;
+                    const teardropWidth = 280;
+                    const pinFromRight = window.innerWidth - point.x;
+                    // Prüfe ob der Teardrop in die Info-Box-Zone ragt
+                    if (pinFromRight < infoBoxRight + teardropWidth / 2) {
+                        const targetX = window.innerWidth - infoBoxRight - teardropWidth / 2 - 20;
+                        panX = point.x - targetX;
+                    }
+                }
+
+                if (panX !== 0 || panY !== 0) {
+                    map.panBy([panX, panY], { animate: true, duration: 0.3 });
                 }
             }, 100);
         });
