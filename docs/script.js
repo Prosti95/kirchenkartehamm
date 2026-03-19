@@ -188,12 +188,10 @@ const addMarkers = (churches) => {
                 const markerLatLng = marker.getLatLng();
                 const isMobile = window.innerWidth <= 768;
                 if (isMobile) {
-                    // Pin in untere Hälfte verschieben, damit Info-Box oben nicht verdeckt
+                    // Pin nach unten verschieben, damit Teardrop + Info-Box oben Platz haben
                     const point = map.latLngToContainerPoint(markerLatLng);
-                    const targetY = window.innerHeight * 0.65;
-                    const offsetPoint = L.point(point.x, point.y - (targetY - point.y));
-                    const newLatLng = map.containerPointToLatLng(offsetPoint);
-                    map.panTo(newLatLng, { animate: true, duration: 0.5 });
+                    const targetY = window.innerHeight * 0.75;
+                    map.panBy([0, point.y - targetY], { animate: true, duration: 0.5 });
                 } else {
                     map.panTo(markerLatLng, {
                         animate: true,
