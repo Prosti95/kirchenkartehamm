@@ -183,16 +183,24 @@ const addMarkers = (churches) => {
         });
         
         marker.on('popupopen', function() {
-            // Mobile: Pin ans untere Ende pannen damit Teardrop + Info-Box darüber Platz haben
-            // Desktop: Leaflets autoPan im Popup regelt das automatisch
-            const isMobile = window.innerWidth <= 768;
-            if (isMobile) {
-                setTimeout(() => {
-                    const point = map.latLngToContainerPoint(marker.getLatLng());
+            // Pin etwas nach unten im Viewport verschieben, damit Teardrop darüber Platz hat
+            setTimeout(() => {
+                const point = map.latLngToContainerPoint(marker.getLatLng());
+                const isMobile = window.innerWidth <= 768;
+                if (isMobile) {
+                    // Mobile: Pin ganz nach unten
                     const targetY = window.innerHeight - 30;
                     map.panBy([0, point.y - targetY], { animate: true, duration: 0.5 });
-                }, 100);
-            }
+                } else {
+                    // Desktop: sanfter Versatz — Pin in untere 60% des Viewports
+                    const targetY = window.innerHeight * 0.6;
+                    if (point.y < targetY) {
+                        // Pin ist schon weit genug unten, kein Pan nötig
+                        return;
+                    }
+                    map.panBy([0, point.y - targetY], { animate: true, duration: 0.3 });
+                }
+            }, 100);
         });
         
         marker.on('popupclose', function() {
