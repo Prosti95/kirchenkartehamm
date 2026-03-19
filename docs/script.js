@@ -191,8 +191,8 @@ const addMarkers = (churches) => {
                 let panY = 0;
 
                 if (isMobile) {
-                    // Mobile: Pin ganz nach unten
-                    const targetY = window.innerHeight - 30;
+                    // Mobile: Pin nach unten, aber mit genug Abstand zum Rand
+                    const targetY = window.innerHeight - 80;
                     panY = point.y - targetY;
                 } else {
                     // Desktop: vertikal — Pin mindestens bei 60% der Viewporthöhe
@@ -347,7 +347,7 @@ async function addRegionHighlight() {
             });
         });
         
-        const padding = 0.08; // Etwas Puffer
+        const padding = 0.15; // Genug Puffer damit Pins am Rand richtig pannen können
         const minLat = Math.min(...allLats) - padding;
         const maxLat = Math.max(...allLats) + padding;
         const minLng = Math.min(...allLngs) - padding;
