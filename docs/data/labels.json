@@ -1,0 +1,119 @@
+{
+  "cities": [
+    {
+      "name": "HAMM",
+      "coordinates": {"lat": 51.680, "lng": 7.820},
+      "type": "city"
+    },
+    {
+      "name": "WERNE",
+      "coordinates": {"lat": 51.665, "lng": 7.635},
+      "type": "city"
+    },
+    {
+      "name": "AHLEN",
+      "coordinates": {"lat": 51.763, "lng": 7.890},
+      "type": "city"
+    },
+    {
+      "name": "SENDENHORST",
+      "coordinates": {"lat": 51.843, "lng": 7.830},
+      "type": "city"
+    },
+    {
+      "name": "BÖNEN",
+      "coordinates": {"lat": 51.600, "lng": 7.770},
+      "type": "city"
+    }
+  ],
+  "districts": [
+    {
+      "name": "Herbern",
+      "coordinates": {"lat": 51.740, "lng": 7.660}
+    },
+    {
+      "name": "Stockum",
+      "coordinates": {"lat": 51.686, "lng": 7.698}
+    },
+    {
+      "name": "Bockum",
+      "coordinates": {"lat": 51.698, "lng": 7.765}
+    },
+    {
+      "name": "Hövel",
+      "coordinates": {"lat": 51.715, "lng": 7.755}
+    },
+    {
+      "name": "Heessen",
+      "coordinates": {"lat": 51.708, "lng": 7.812}
+    },
+    {
+      "name": "Mark",
+      "coordinates": {"lat": 51.683, "lng": 7.852}
+    },
+    {
+      "name": "Werries",
+      "coordinates": {"lat": 51.688, "lng": 7.882}
+    },
+    {
+      "name": "Uentrop",
+      "coordinates": {"lat": 51.697, "lng": 7.940}
+    },
+    {
+      "name": "Dolberg",
+      "coordinates": {"lat": 51.716, "lng": 7.915}
+    },
+    {
+      "name": "Braam-Ostwennemar",
+      "coordinates": {"lat": 51.683, "lng": 7.905}
+    },
+    {
+      "name": "Dasbeck",
+      "coordinates": {"lat": 51.722, "lng": 7.820}
+    },
+    {
+      "name": "Walstedde",
+      "coordinates": {"lat": 51.758, "lng": 7.795}
+    },
+    {
+      "name": "Pelkum",
+      "coordinates": {"lat": 51.645, "lng": 7.730}
+    },
+    {
+      "name": "Herringen",
+      "coordinates": {"lat": 51.661, "lng": 7.742}
+    },
+    {
+      "name": "Wiescherhöfen",
+      "coordinates": {"lat": 51.663, "lng": 7.785}
+    },
+    {
+      "name": "Selmigerheide",
+      "coordinates": {"lat": 51.641, "lng": 7.783}
+    },
+    {
+      "name": "Berge",
+      "coordinates": {"lat": 51.650, "lng": 7.825}
+    },
+    {
+      "name": "Rhynern",
+      "coordinates": {"lat": 51.631, "lng": 7.856}
+    },
+    {
+      "name": "Westtünnen",
+      "coordinates": {"lat": 51.658, "lng": 7.860}
+    },
+    {
+      "name": "Drechen",
+      "coordinates": {"lat": 51.603, "lng": 7.840}
+    },
+    {
+      "name": "Flierich",
+      "coordinates": {"lat": 51.590, "lng": 7.810}
+    },
+    {
+      "name": "Hilbeck",
+      "coordinates": {"lat": 51.578, "lng": 7.875}
+    }
+  ]
+}

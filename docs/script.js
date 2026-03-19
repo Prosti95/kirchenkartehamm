@@ -3,19 +3,50 @@ let map;
 let currentActiveMarker = null;
 let markerGroup;
 
-// Pin-Icon aus SVG-Datei erstellen
-const createPinIcon = (isActive) => {
+// Pin-Icon aus SVG-Datei erstellen (zoom-abhaengige Groesse)
+const createPinIcon = (isActive, zoom) => {
+    // Basisgroesse bei Zoom 11, skaliert mit Zoom-Level
+    const scale = zoom ? Math.max(0.4, Math.min(1, (zoom - 9) / 4)) : 1;
+    const w = Math.round(32 * scale);
+    const h = Math.round(43 * scale);
     return L.icon({
         iconUrl: 'images/pin.svg',
-        iconSize: [32, 43],
-        iconAnchor: [16, 43],
-        popupAnchor: [0, -43],
+        iconSize: [w, h],
+        iconAnchor: [w / 2, h],
+        popupAnchor: [0, -h],
         className: isActive ? 'pin-active' : 'pin-inactive'
     });
 };
 
 const defaultIcon = createPinIcon(false);
 const activeIcon = createPinIcon(true);
+
+// Pin-Groessen und Label-Sichtbarkeit bei Zoom aktualisieren
+const updateZoomDependentElements = () => {
+    const zoom = map.getZoom();
+    const newDefault = createPinIcon(false, zoom);
+    const newActive = createPinIcon(true, zoom);
+
+    if (markerGroup) {
+        markerGroup.eachLayer(marker => {
+            if (marker === currentActiveMarker) {
+                marker.setIcon(newActive);
+            } else {
+                marker.setIcon(newDefault);
+            }
+        });
+    }
+
+    // District-Labels ab Zoom < 12 ausblenden
+    document.querySelectorAll('.district-label').forEach(el => {
+        el.style.display = zoom < 12 ? 'none' : '';
+    });
+
+    // City-Labels ab Zoom < 10 ausblenden
+    document.querySelectorAll('.city-label').forEach(el => {
+        el.style.display = zoom < 10 ? 'none' : '';
+    });
+};
 
 // Popup-Inhalt erstellen (nur Bild - tropfenförmig)
 const createPopupContent = (church) => {
@@ -175,13 +206,6 @@ const addMarkers = (churches) => {
     });
     
     map.addLayer(markerGroup);
-    
-    // Karte an Marker-Bounds anpassen
-    if (churches.length > 0) {
-        map.fitBounds(markerGroup.getBounds(), {
-            padding: [50, 50]
-        });
-    }
 };
 
 // Kirchendaten laden
@@ -196,6 +220,46 @@ const loadChurches = async () => {
     } catch (error) {
         console.error('Fehler beim Laden der Kirchendaten:', error);
         alert('Die Kirchendaten konnten nicht geladen werden. Bitte laden Sie die Seite neu.');
+    }
+};
+
+// Orts- und Stadtteil-Labels laden und anzeigen
+const loadLabels = async () => {
+    try {
+        const response = await fetch('data/labels.json');
+        if (!response.ok) {
+            console.warn('Labels konnten nicht geladen werden');
+            return;
+        }
+        const data = await response.json();
+
+        data.cities.forEach(city => {
+            const cityLabel = L.divIcon({
+                className: 'map-label city-label',
+                html: city.name,
+                iconSize: null,
+                iconAnchor: [0, 0]
+            });
+            L.marker([city.coordinates.lat, city.coordinates.lng], {
+                icon: cityLabel,
+                interactive: false
+            }).addTo(map);
+        });
+
+        data.districts.forEach(district => {
+            const districtLabel = L.divIcon({
+                className: 'map-label district-label',
+                html: district.name,
+                iconSize: null,
+                iconAnchor: [0, 0]
+            });
+            L.marker([district.coordinates.lat, district.coordinates.lng], {
+                icon: districtLabel,
+                interactive: false
+            }).addTo(map);
+        });
+    } catch (error) {
+        console.error('Fehler beim Laden der Labels:', error);
     }
 };
 
@@ -247,56 +311,6 @@ async function addRegionHighlight() {
             }
         };
         
-        // Weißer Overlay außerhalb aller Städte (unter Markern)
-        L.geoJSON(invertedLayer, {
-            style: {
-                fillColor: '#ffffff',
-                fillOpacity: 0.88,
-                stroke: false
-            },
-            interactive: false,
-            pane: 'tilePane'
-        }).addTo(map);
-        
-        // Die 4 Staedte zu einem einzigen Polygon vereinen mit Turf.js
-        let unionPolygon = null;
-        
-        allCities.forEach(cityData => {
-            // Konvertiere zu Turf Feature
-            let feature;
-            if (cityData.type === 'MultiPolygon') {
-                feature = turf.multiPolygon(cityData.coordinates);
-            } else if (cityData.geometry) {
-                feature = cityData;
-            } else {
-                feature = turf.polygon(cityData.coordinates);
-            }
-            
-            // Union mit bestehendem Polygon
-            if (unionPolygon === null) {
-                unionPolygon = feature;
-            } else {
-                try {
-                    unionPolygon = turf.union(unionPolygon, feature);
-                } catch (e) {
-                    console.warn('Union failed for a city, skipping:', e);
-                }
-            }
-        });
-        
-        // Zeichne nur die äußere vereinte Grenze
-        if (unionPolygon) {
-            L.geoJSON(unionPolygon, {
-                style: {
-                    color: '#10b981',
-                    weight: 2,
-                    fillOpacity: 0,
-                    opacity: 0.8
-                },
-                interactive: false
-            }).addTo(map);
-        }
-        
         // Bounds berechnen für begrenztes Scrollen
         const allLats = [];
         const allLngs = [];
@@ -326,7 +340,7 @@ const initMap = async () => {
     // Karte mit begrenztem Scrollbereich
     map = L.map('map', {
         center: [51.68, 7.82],
-        zoom: 11,
+        zoom: 12,
         minZoom: 10,
         maxZoom: 16,
         zoomControl: false,
@@ -336,12 +350,17 @@ const initMap = async () => {
         dragging: true
     });
     
-    // Tile Layer hinzufügen (CartoDB Light No Labels - sehr simpel)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 19
+    // Stilisierte Hintergrundkarte als Image Overlay
+    // Bounds = GeoJSON-Extent der 4 Staedte (SVG fuellt ViewBox komplett aus)
+    const imageBounds = [[51.5566, 7.5406], [51.8860, 7.9974]];
+    L.imageOverlay('images/Map.svg', imageBounds, {
+        opacity: 1.0,
+        interactive: false,
+        zIndex: 1
     }).addTo(map);
+
+    // Hintergrundfarbe fuer Bereiche ausserhalb des Bildes
+    map.getContainer().style.backgroundColor = '#f5f5f5';
     
     // Zoom-Controls unten rechts positionieren
     L.control.zoom({
@@ -367,9 +386,16 @@ const initMap = async () => {
     
     // Hamm + Werne Highlight hinzufügen
     await addRegionHighlight();
+
+    // Labels laden (Staedte und Stadtteile)
+    await loadLabels();
     
     // Kirchendaten laden
     await loadChurches();
+
+    // Zoom-abhaengige Elemente initial setzen und bei Zoom aktualisieren
+    updateZoomDependentElements();
+    map.on('zoomend', updateZoomDependentElements);
 };
 
 // Karte beim Laden der Seite initialisieren

@@ -38,7 +38,7 @@ body {
     overflow: hidden;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
     background: #f0f0f0;
-    border: 6px solid #10b981;
+    border: 6px solid #1e40af;
     box-sizing: border-box;
     position: relative;
 }
@@ -74,7 +74,7 @@ body {
 
 /* Fixe Info-Box oben rechts */
 .info-box-control {
-    background: #e8f5e9;
+    background: #e8edf5;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     padding: 0;
@@ -135,7 +135,7 @@ body {
     margin: 0 0 16px 0;
     font-size: 20px;
     font-weight: 600;
-    color: #047857;
+    color: #1e40af;
     padding-right: 30px;
 }
 
@@ -173,7 +173,7 @@ body {
     content: "•";
     position: absolute;
     left: 0;
-    color: #10b981;
+    color: #3b5998;
     font-weight: bold;
     font-size: 16px;
 }
@@ -193,7 +193,7 @@ body {
     display: block;
     margin-top: 16px;
     padding: 10px 16px;
-    background: #10b981;
+    background: #1e40af;
     color: white !important;
     text-decoration: none;
     text-align: center;
@@ -204,7 +204,7 @@ body {
 }
 
 .info-website-button:hover {
-    background: #059669;
+    background: #1e3a8a;
     color: white !important;
 }
 
@@ -319,4 +319,59 @@ body {
 /* Loading State */
 .leaflet-container {
     background-color: #f5f5f5;
+}
+
+/* Orts- und Stadtteil-Labels */
+.map-label {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    white-space: nowrap;
+    pointer-events: none;
+    font-weight: 600;
+}
+
+.map-label.city-label {
+    font-size: 16px;
+    color: #ffffff !important;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: #004488ff !important;
+    padding: 8px 16px !important;
+    border-radius: 2px;
+    text-shadow: none;
+}
+
+.map-label.district-label {
+    font-size: 14px;
+    color: #3b4d8a;
+    font-weight: 700;
+    text-shadow: 0 0 3px #fff, 0 0 6px #fff;
+}
+
+@media (max-width: 768px) {
+    .map-label.city-label {
+        font-size: 13px;
+        padding: 6px 12px !important;
+    }
+
+    .map-label.district-label {
+        font-size: 11px;
+    }
+}
+
+/* SVG Overlay Cursor Fix */
+.leaflet-image-layer {
+    cursor: inherit !important;
+    pointer-events: none !important;
+}
+
+.leaflet-container {
+    cursor: grab;
+}
+
+.leaflet-container.leaflet-dragging {
+    cursor: grabbing;
 }
