@@ -141,7 +141,7 @@ const updateInfoBox = (church) => {
 window.closeInfoBox = function() {
     updateInfoBox(null);
     if (currentActiveMarker) {
-        currentActiveMarker.setIcon(defaultIcon);
+        currentActiveMarker.setIcon(createPinIcon(false, map.getZoom()));
         currentActiveMarker.closePopup();
         currentActiveMarker = null;
     }
@@ -169,12 +169,13 @@ const addMarkers = (churches) => {
         
         // Event-Handler für Marker-Click
         marker.on('click', function() {
+            const zoom = map.getZoom();
             // Vorherigen aktiven Marker zurücksetzen
             if (currentActiveMarker && currentActiveMarker !== marker) {
-                currentActiveMarker.setIcon(defaultIcon);
+                currentActiveMarker.setIcon(createPinIcon(false, zoom));
             }
             // Aktuellen Marker als aktiv markieren
-            marker.setIcon(activeIcon);
+            marker.setIcon(createPinIcon(true, zoom));
             currentActiveMarker = marker;
             
             // Info-Box mit Kirchendaten aktualisieren
@@ -182,21 +183,31 @@ const addMarkers = (churches) => {
         });
         
         marker.on('popupopen', function() {
-            // Viewbox erweitern damit Popup und Info-Box beide sichtbar sind
+            // Viewbox anpassen damit Pin + Popup sichtbar bleiben
             setTimeout(() => {
                 const markerLatLng = marker.getLatLng();
-                map.panTo(markerLatLng, {
-                    animate: true,
-                    duration: 0.5,
-                    easeLinearity: 0.25
-                });
+                const isMobile = window.innerWidth <= 768;
+                if (isMobile) {
+                    // Pin in untere Hälfte verschieben, damit Info-Box oben nicht verdeckt
+                    const point = map.latLngToContainerPoint(markerLatLng);
+                    const targetY = window.innerHeight * 0.65;
+                    const offsetPoint = L.point(point.x, point.y - (targetY - point.y));
+                    const newLatLng = map.containerPointToLatLng(offsetPoint);
+                    map.panTo(newLatLng, { animate: true, duration: 0.5 });
+                } else {
+                    map.panTo(markerLatLng, {
+                        animate: true,
+                        duration: 0.5,
+                        easeLinearity: 0.25
+                    });
+                }
             }, 100);
         });
         
         marker.on('popupclose', function() {
             // Marker zurücksetzen wenn Popup geschlossen wird
             if (currentActiveMarker === marker) {
-                marker.setIcon(defaultIcon);
+                marker.setIcon(createPinIcon(false, map.getZoom()));
                 updateInfoBox(null);
                 currentActiveMarker = null;
             }
