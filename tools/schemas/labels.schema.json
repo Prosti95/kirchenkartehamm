@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Kirchenkarte - Labels",
+  "type": "object",
+  "required": ["cities", "districts"],
+  "properties": {
+    "cities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "coordinates", "type"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "coordinates": {
+            "type": "object",
+            "required": ["lat", "lng"],
+            "properties": {
+              "lat": { "type": "number", "minimum": 51.4, "maximum": 52.0 },
+              "lng": { "type": "number", "minimum": 7.3, "maximum": 8.2 }
+            }
+          },
+          "type": { "type": "string", "enum": ["city"] }
+        }
+      }
+    },
+    "districts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "coordinates"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "coordinates": {
+            "type": "object",
+            "required": ["lat", "lng"],
+            "properties": {
+              "lat": { "type": "number", "minimum": 51.4, "maximum": 52.0 },
+              "lng": { "type": "number", "minimum": 7.3, "maximum": 8.2 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

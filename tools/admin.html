@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirchenkarte Admin</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1f2937; }
+
+        /* Header */
+        .header { background: #1e40af; color: white; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+        .header h1 { font-size: 20px; font-weight: 600; }
+        .header-actions { display: flex; gap: 8px; }
+
+        /* Tabs */
+        .tabs { display: flex; background: white; border-bottom: 2px solid #e5e7eb; padding: 0 24px; }
+        .tab { padding: 12px 20px; cursor: pointer; font-size: 14px; font-weight: 500; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+        .tab:hover { color: #1e40af; }
+        .tab.active { color: #1e40af; border-bottom-color: #1e40af; }
+
+        /* Main layout */
+        .content { display: none; padding: 20px 24px; max-width: 1400px; margin: 0 auto; }
+        .content.active { display: block; }
+
+        /* Buttons */
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-primary { background: #1e40af; color: white; }
+        .btn-primary:hover { background: #1e3a8a; }
+        .btn-success { background: #059669; color: white; }
+        .btn-success:hover { background: #047857; }
+        .btn-danger { background: #dc2626; color: white; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-secondary { background: #e5e7eb; color: #374151; }
+        .btn-secondary:hover { background: #d1d5db; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Import section */
+        .import-section { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+        .import-card { background: white; border-radius: 10px; padding: 24px; flex: 1; min-width: 280px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .import-card h3 { font-size: 15px; margin-bottom: 8px; }
+        .import-card p { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
+        .drop-zone { border: 2px dashed #d1d5db; border-radius: 8px; padding: 24px; text-align: center; color: #9ca3af; cursor: pointer; transition: all 0.2s; }
+        .drop-zone:hover, .drop-zone.dragover { border-color: #1e40af; background: #eff6ff; color: #1e40af; }
+
+        /* List + Detail layout */
+        .editor-layout { display: flex; gap: 20px; }
+        .list-panel { width: 320px; flex-shrink: 0; background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); max-height: calc(100vh - 200px); display: flex; flex-direction: column; }
+        .list-header { padding: 12px 16px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+        .list-header h3 { font-size: 14px; }
+        .list-search { padding: 8px 16px; border-bottom: 1px solid #e5e7eb; }
+        .list-search input { width: 100%; padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px; }
+        .list-items { overflow-y: auto; flex: 1; }
+        .list-item { padding: 10px 16px; cursor: pointer; border-bottom: 1px solid #f3f4f6; font-size: 13px; transition: background 0.1s; display: flex; justify-content: space-between; align-items: center; }
+        .list-item:hover { background: #f9fafb; }
+        .list-item.active { background: #eff6ff; border-left: 3px solid #1e40af; }
+        .list-item .name { font-weight: 500; }
+        .list-item .subtitle { font-size: 11px; color: #9ca3af; }
+        .list-item .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .list-item .status-dot.new { background: #059669; }
+        .list-item .status-dot.modified { background: #f59e0b; }
+
+        /* Detail form */
+        .detail-panel { flex: 1; background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; max-height: calc(100vh - 200px); overflow-y: auto; }
+        .detail-panel h3 { font-size: 16px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb; }
+        .form-row { display: flex; gap: 12px; margin-bottom: 14px; }
+        .form-group { flex: 1; }
+        .form-group label { display: block; font-size: 12px; font-weight: 500; color: #374151; margin-bottom: 4px; }
+        .form-group label .required { color: #dc2626; }
+        .form-group input, .form-group select { width: 100%; padding: 7px 10px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px; transition: border-color 0.2s; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #1e40af; box-shadow: 0 0 0 2px rgba(30,64,175,0.1); }
+        .form-group input.invalid { border-color: #dc2626; background: #fef2f2; }
+        .form-group .error-msg { font-size: 11px; color: #dc2626; margin-top: 2px; }
+        .form-group .coord-row { display: flex; gap: 8px; align-items: flex-end; }
+        .form-group .coord-row .btn { white-space: nowrap; margin-bottom: 0; height: 33px; }
+        .form-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid #e5e7eb; }
+        .form-section h4 { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: #374151; }
+
+        /* Besonderheiten list */
+        .feature-list { display: flex; flex-direction: column; gap: 6px; }
+        .feature-item { display: flex; gap: 6px; align-items: center; }
+        .feature-item input { flex: 1; }
+        .feature-item .btn-remove { width: 28px; height: 28px; padding: 0; display: flex; align-items: center; justify-content: center; background: #fee2e2; color: #dc2626; border-radius: 4px; font-size: 16px; border: none; cursor: pointer; }
+        .feature-item .btn-remove:hover { background: #fecaca; }
+
+        /* Map */
+        #admin-map { height: calc(100vh - 200px); border-radius: 10px; }
+        .map-container { position: relative; }
+        .map-toolbar { position: absolute; top: 10px; left: 60px; z-index: 1000; display: flex; gap: 6px; }
+        .map-toolbar .btn { box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+        .map-info { position: absolute; bottom: 10px; left: 10px; z-index: 1000; background: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+
+        /* Images tab */
+        .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 16px; }
+        .image-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .image-card img { width: 100%; height: 120px; object-fit: cover; }
+        .image-card .image-info { padding: 8px; font-size: 11px; }
+        .image-card .image-info .name { font-weight: 500; word-break: break-all; }
+        .image-card .image-info .size { color: #9ca3af; }
+        .image-card .image-info .warning { color: #f59e0b; font-weight: 500; }
+
+        /* Export / Diff */
+        .diff-section { background: white; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 20px; }
+        .diff-section h3 { font-size: 15px; margin-bottom: 16px; }
+        .diff-item { padding: 8px 12px; border-radius: 4px; margin-bottom: 4px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+        .diff-item.added { background: #ecfdf5; color: #065f46; }
+        .diff-item.modified { background: #fffbeb; color: #92400e; }
+        .diff-item.removed { background: #fef2f2; color: #991b1b; }
+        .diff-item .badge { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; }
+        .diff-item.added .badge { background: #a7f3d0; }
+        .diff-item.modified .badge { background: #fde68a; }
+        .diff-item.removed .badge { background: #fecaca; }
+        .export-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+        .validation-errors { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+        .validation-errors h4 { color: #991b1b; font-size: 14px; margin-bottom: 8px; }
+        .validation-errors li { font-size: 13px; color: #991b1b; margin-left: 20px; margin-bottom: 4px; }
+
+        .no-data { text-align: center; padding: 40px; color: #9ca3af; }
+        .no-data p { margin-bottom: 12px; }
+
+        /* Toast notification */
+        .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; color: white; font-size: 14px; z-index: 9999; animation: slideIn 0.3s ease; }
+        .toast.success { background: #059669; }
+        .toast.error { background: #dc2626; }
+        .toast.info { background: #1e40af; }
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .editor-layout { flex-direction: column; }
+            .list-panel { width: 100%; max-height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>⛪ Kirchenkarte Admin</h1>
+    <div class="header-actions">
+        <button class="btn btn-primary" onclick="loadFromGitHub()">📥 Von GitHub laden</button>
+        <span id="status-indicator" style="font-size: 13px; opacity: 0.8;"></span>
+    </div>
+</div>
+
+<div class="tabs">
+    <div class="tab active" data-tab="churches">Kirchen</div>
+    <div class="tab" data-tab="labels">Labels</div>
+    <div class="tab" data-tab="map">Karte</div>
+    <div class="tab" data-tab="images">Bilder</div>
+    <div class="tab" data-tab="export">Export</div>
+</div>
+
+<!-- KIRCHEN TAB -->
+<div class="content active" id="tab-churches">
+    <div id="churches-empty" class="no-data">
+        <p>Keine Daten geladen.</p>
+        <button class="btn btn-primary" onclick="loadFromGitHub()">📥 Von GitHub laden</button>
+        <p style="margin-top:8px">oder</p>
+        <div class="drop-zone" id="churches-drop" style="margin-top:8px;max-width:400px;margin-left:auto;margin-right:auto;">
+            churches.json hierher ziehen oder klicken
+            <input type="file" accept=".json" style="display:none" id="churches-file-input">
+        </div>
+    </div>
+    <div id="churches-editor" style="display:none;">
+        <div class="editor-layout">
+            <div class="list-panel">
+                <div class="list-header">
+                    <h3>Kirchen (<span id="church-count">0</span>)</h3>
+                    <button class="btn btn-success btn-sm" onclick="addChurch()">+ Neue Kirche</button>
+                </div>
+                <div class="list-search">
+                    <input type="text" placeholder="Suchen..." oninput="filterChurchList(this.value)">
+                </div>
+                <div class="list-items" id="church-list"></div>
+            </div>
+            <div class="detail-panel" id="church-detail">
+                <div class="no-data"><p>Kirche aus der Liste auswählen</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LABELS TAB -->
+<div class="content" id="tab-labels">
+    <div id="labels-empty" class="no-data">
+        <p>Keine Label-Daten geladen.</p>
+        <button class="btn btn-primary" onclick="loadFromGitHub()">📥 Von GitHub laden</button>
+        <p style="margin-top:8px">oder</p>
+        <div class="drop-zone" id="labels-drop" style="margin-top:8px;max-width:400px;margin-left:auto;margin-right:auto;">
+            labels.json hierher ziehen oder klicken
+            <input type="file" accept=".json" style="display:none" id="labels-file-input">
+        </div>
+    </div>
+    <div id="labels-editor" style="display:none;">
+        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:400px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <h3 style="font-size:15px;">Städte</h3>
+                    <button class="btn btn-success btn-sm" onclick="addCity()">+ Stadt</button>
+                </div>
+                <div id="cities-list"></div>
+            </div>
+            <div style="flex:1;min-width:400px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <h3 style="font-size:15px;">Stadtteile</h3>
+                    <button class="btn btn-success btn-sm" onclick="addDistrict()">+ Stadtteil</button>
+                </div>
+                <div id="districts-list"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KARTE TAB -->
+<div class="content" id="tab-map">
+    <div class="map-container">
+        <div class="map-toolbar">
+            <button class="btn btn-primary btn-sm" id="pin-mode-btn" onclick="togglePinMode()">📌 Neuen Pin setzen</button>
+        </div>
+        <div id="admin-map"></div>
+        <div class="map-info" id="map-info">Klicke auf einen Pin zum Bearbeiten. Pins können gezogen werden.</div>
+    </div>
+</div>
+
+<!-- BILDER TAB -->
+<div class="content" id="tab-images">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 style="font-size:15px;">Kirchenbilder</h3>
+    </div>
+    <div class="drop-zone" id="images-drop" style="margin-bottom:16px;">
+        Bilder hierher ziehen oder klicken zum Hinzufügen
+        <input type="file" accept="image/*" multiple style="display:none" id="images-file-input">
+    </div>
+    <div class="image-grid" id="images-grid"></div>
+</div>
+
+<!-- EXPORT TAB -->
+<div class="content" id="tab-export">
+    <div id="validation-box"></div>
+    <div class="diff-section">
+        <h3>Änderungen</h3>
+        <div id="diff-list">
+            <div class="no-data"><p>Noch keine Änderungen</p></div>
+        </div>
+    </div>
+    <div class="diff-section">
+        <h3>Dateien herunterladen</h3>
+        <div class="export-actions">
+            <button class="btn btn-primary" onclick="downloadChurchesJson()">📥 churches.json</button>
+            <button class="btn btn-primary" onclick="downloadLabelsJson()">📥 labels.json</button>
+            <button class="btn btn-primary" onclick="downloadImagesZip()" id="btn-download-images" disabled>📥 Neue Bilder (ZIP)</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ========== STATE ==========
+let churches = [];
+let labels = { cities: [], districts: [] };
+let baselineChurches = null; // snapshot after import for diff
+let baselineLabels = null;
+let selectedChurchIndex = -1;
+let newImages = {}; // filename -> File object
+let adminMap = null;
+let churchMarkers = [];
+let labelMarkers = [];
+let pinMode = false;
+
+const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/Prosti95/kirchenkartehamm/main/docs';
+
+// ========== TABS ==========
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        if (tab.dataset.tab === 'map') initMap();
+        if (tab.dataset.tab === 'export') updateDiff();
+    });
+});
+
+// ========== TOAST ==========
+function toast(msg, type = 'info') {
+    const el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+}
+
+// ========== LOAD FROM GITHUB ==========
+async function loadFromGitHub() {
+    try {
+        document.getElementById('status-indicator').textContent = 'Lade...';
+        const [cRes, lRes] = await Promise.all([
+            fetch(GITHUB_RAW_BASE + '/data/churches.json'),
+            fetch(GITHUB_RAW_BASE + '/data/labels.json')
+        ]);
+        if (!cRes.ok || !lRes.ok) throw new Error('Fehler beim Laden');
+        const cData = await cRes.json();
+        const lData = await lRes.json();
+
+        churches = cData.gottesdienstorte || [];
+        baselineChurches = JSON.parse(JSON.stringify(churches));
+        labels = { cities: lData.cities || [], districts: lData.districts || [] };
+        baselineLabels = JSON.parse(JSON.stringify(labels));
+
+        document.getElementById('status-indicator').textContent = `✓ ${churches.length} Kirchen, ${labels.cities.length + labels.districts.length} Labels geladen`;
+        renderChurchList();
+        renderLabelsEditor();
+        toast(`${churches.length} Kirchen und ${labels.cities.length + labels.districts.length} Labels geladen`, 'success');
+    } catch (e) {
+        document.getElementById('status-indicator').textContent = '✗ Fehler';
+        toast('Fehler beim Laden: ' + e.message, 'error');
+    }
+}
+
+// ========== DROP ZONES ==========
+function setupDropZone(zoneId, fileInputId, handler) {
+    const zone = document.getElementById(zoneId);
+    const input = document.getElementById(fileInputId);
+    if (!zone || !input) return;
+    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); handler(e.dataTransfer.files[0]); });
+    input.addEventListener('change', e => { if (e.target.files[0]) handler(e.target.files[0]); });
+}
+
+function loadChurchesFile(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+        try {
+            const data = JSON.parse(e.target.result);
+            churches = data.gottesdienstorte || data;
+            baselineChurches = JSON.parse(JSON.stringify(churches));
+            renderChurchList();
+            toast(`${churches.length} Kirchen geladen`, 'success');
+        } catch (err) { toast('Ungültige JSON-Datei', 'error'); }
+    };
+    reader.readAsText(file);
+}
+
+function loadLabelsFile(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+        try {
+            const data = JSON.parse(e.target.result);
+            labels = { cities: data.cities || [], districts: data.districts || [] };
+            baselineLabels = JSON.parse(JSON.stringify(labels));
+            renderLabelsEditor();
+            toast(`${labels.cities.length} Städte, ${labels.districts.length} Stadtteile geladen`, 'success');
+        } catch (err) { toast('Ungültige JSON-Datei', 'error'); }
+    };
+    reader.readAsText(file);
+}
+
+setupDropZone('churches-drop', 'churches-file-input', loadChurchesFile);
+setupDropZone('labels-drop', 'labels-file-input', loadLabelsFile);
+
+// ========== IMAGES DROP ==========
+function setupImagesDrop() {
+    const zone = document.getElementById('images-drop');
+    const input = document.getElementById('images-file-input');
+    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); handleImageFiles(e.dataTransfer.files); });
+    input.addEventListener('change', e => handleImageFiles(e.target.files));
+}
+
+function handleImageFiles(files) {
+    for (const file of files) {
+        if (!file.type.startsWith('image/')) continue;
+        newImages[file.name] = file;
+    }
+    renderImagesGrid();
+    document.getElementById('btn-download-images').disabled = Object.keys(newImages).length === 0;
+    toast(`${files.length} Bild(er) hinzugefügt`, 'success');
+}
+
+function renderImagesGrid() {
+    const grid = document.getElementById('images-grid');
+    grid.innerHTML = '';
+    for (const [name, file] of Object.entries(newImages)) {
+        const card = document.createElement('div');
+        card.className = 'image-card';
+        const url = URL.createObjectURL(file);
+        const sizeKB = Math.round(file.size / 1024);
+        card.innerHTML = `
+            <img src="${url}" alt="${esc(name)}">
+            <div class="image-info">
+                <div class="name">${esc(name)}</div>
+                <div class="size">${sizeKB} KB</div>
+                ${sizeKB > 200 ? '<div class="warning">⚠ > 200 KB</div>' : ''}
+                <button class="btn btn-danger btn-sm" style="margin-top:4px;width:100%" onclick="removeImage('${esc(name)}')">Entfernen</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    }
+}
+
+function removeImage(name) {
+    delete newImages[name];
+    renderImagesGrid();
+    document.getElementById('btn-download-images').disabled = Object.keys(newImages).length === 0;
+}
+
+setupImagesDrop();
+
+// ========== CHURCH LIST ==========
+function renderChurchList() {
+    document.getElementById('churches-empty').style.display = 'none';
+    document.getElementById('churches-editor').style.display = '';
+    document.getElementById('church-count').textContent = churches.length;
+
+    const list = document.getElementById('church-list');
+    list.innerHTML = '';
+    churches.forEach((c, i) => {
+        const div = document.createElement('div');
+        div.className = 'list-item' + (i === selectedChurchIndex ? ' active' : '');
+        const status = getChurchStatus(i);
+        div.innerHTML = `
+            <div>
+                <div class="name">${esc(c.name || '(Ohne Name)')}</div>
+                <div class="subtitle">${esc(c.address?.city || '')} – ${esc(c.stadtteil || '')}</div>
+            </div>
+            ${status ? `<div class="status-dot ${status}"></div>` : ''}
+        `;
+        div.addEventListener('click', () => selectChurch(i));
+        list.appendChild(div);
+    });
+}
+
+function getChurchStatus(index) {
+    if (!baselineChurches) return '';
+    if (index >= baselineChurches.length) return 'new';
+    if (JSON.stringify(churches[index]) !== JSON.stringify(baselineChurches[index])) return 'modified';
+    return '';
+}
+
+function filterChurchList(query) {
+    const q = query.toLowerCase();
+    document.querySelectorAll('#church-list .list-item').forEach((item, i) => {
+        const c = churches[i];
+        const match = (c.name || '').toLowerCase().includes(q) || (c.address?.city || '').toLowerCase().includes(q) || (c.stadtteil || '').toLowerCase().includes(q);
+        item.style.display = match ? '' : 'none';
+    });
+}
+
+function selectChurch(index) {
+    selectedChurchIndex = index;
+    renderChurchList();
+    renderChurchDetail();
+    if (adminMap) focusMapOnChurch(index);
+}
+
+function addChurch() {
+    churches.push({
+        name: '',
+        stadtteil: '',
+        address: { street: '', zipCode: '', city: 'Hamm' },
+        coordinates: { lat: 51.68, lng: 7.82 },
+        besonderheiten: [],
+        website: '',
+        buchungsLink: '',
+        photoName: ''
+    });
+    selectChurch(churches.length - 1);
+    toast('Neue Kirche hinzugefügt', 'info');
+}
+
+function deleteChurch(index) {
+    if (!confirm(`"${churches[index].name}" wirklich löschen?`)) return;
+    churches.splice(index, 1);
+    selectedChurchIndex = -1;
+    renderChurchList();
+    document.getElementById('church-detail').innerHTML = '<div class="no-data"><p>Kirche aus der Liste auswählen</p></div>';
+    toast('Kirche gelöscht', 'info');
+}
+
+// ========== CHURCH DETAIL FORM ==========
+function renderChurchDetail() {
+    const c = churches[selectedChurchIndex];
+    if (!c) return;
+    const panel = document.getElementById('church-detail');
+    const features = (c.besonderheiten || []).map((f, i) => {
+        const text = typeof f === 'string' ? f : (f.text || '');
+        return `<div class="feature-item">
+            <input type="text" value="${esc(text)}" onchange="updateFeature(${i}, this.value)">
+            <button class="btn-remove" onclick="removeFeature(${i})">×</button>
+        </div>`;
+    }).join('');
+
+    // Build photo dropdown options
+    const allPhotoNames = getAllPhotoNames();
+    const photoOptions = allPhotoNames.map(n => `<option value="${esc(n)}" ${c.photoName === n ? 'selected' : ''}>${esc(n)}</option>`).join('');
+
+    panel.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #e5e7eb;">
+            <h3 style="margin:0;border:none;padding:0;">${esc(c.name || 'Neue Kirche')}</h3>
+            <button class="btn btn-danger btn-sm" onclick="deleteChurch(${selectedChurchIndex})">🗑 Löschen</button>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Name <span class="required">*</span></label>
+                <input type="text" value="${esc(c.name)}" onchange="updateChurch('name', this.value)" class="${!c.name ? 'invalid' : ''}">
+            </div>
+            <div class="form-group">
+                <label>Stadtteil</label>
+                <input type="text" value="${esc(c.stadtteil || '')}" onchange="updateChurch('stadtteil', this.value)">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Straße + Nr. <span class="required">*</span></label>
+                <input type="text" value="${esc(c.address?.street || '')}" onchange="updateChurch('address.street', this.value)">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group" style="max-width:120px;">
+                <label>PLZ <span class="required">*</span></label>
+                <input type="text" value="${esc(c.address?.zipCode || '')}" maxlength="5" onchange="updateChurch('address.zipCode', this.value)" class="${c.address?.zipCode && !/^[0-9]{5}$/.test(c.address.zipCode) ? 'invalid' : ''}">
+            </div>
+            <div class="form-group">
+                <label>Stadt <span class="required">*</span></label>
+                <input type="text" value="${esc(c.address?.city || '')}" onchange="updateChurch('address.city', this.value)">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Koordinaten <span class="required">*</span></h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Breitengrad (Lat)</label>
+                    <input type="number" step="0.0001" value="${c.coordinates?.lat || ''}" onchange="updateChurch('coordinates.lat', parseFloat(this.value))" id="coord-lat">
+                </div>
+                <div class="form-group">
+                    <label>Längengrad (Lng)</label>
+                    <input type="number" step="0.0001" value="${c.coordinates?.lng || ''}" onchange="updateChurch('coordinates.lng', parseFloat(this.value))" id="coord-lng">
+                </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:4px;">
+                <button class="btn btn-secondary btn-sm" onclick="geocodeAddress()">🔍 Koordinaten aus Adresse suchen</button>
+                <a href="https://nominatim.openstreetmap.org/ui/search.html" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="text-decoration:none;">🌐 Nominatim öffnen</a>
+            </div>
+            <div id="geocode-result" style="font-size:12px;margin-top:6px;color:#059669;"></div>
+        </div>
+
+        <div class="form-section">
+            <h4>Besonderheiten</h4>
+            <div class="feature-list" id="feature-list">${features}</div>
+            <button class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="addFeature()">+ Besonderheit hinzufügen</button>
+        </div>
+
+        <div class="form-section">
+            <h4>Links</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Website</label>
+                    <input type="url" value="${esc(c.website || '')}" onchange="updateChurch('website', this.value)" placeholder="https://...">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Buchungslink</label>
+                    <input type="url" value="${esc(c.buchungsLink || '')}" onchange="updateChurch('buchungsLink', this.value)" placeholder="https://...">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Foto</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Dateiname</label>
+                    <select onchange="updateChurch('photoName', this.value)">
+                        <option value="">– Kein Foto –</option>
+                        ${photoOptions}
+                    </select>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function updateChurch(path, value) {
+    const c = churches[selectedChurchIndex];
+    const parts = path.split('.');
+    let obj = c;
+    for (let i = 0; i < parts.length - 1; i++) {
+        if (!obj[parts[i]]) obj[parts[i]] = {};
+        obj = obj[parts[i]];
+    }
+    obj[parts[parts.length - 1]] = value;
+    renderChurchList();
+    // Update map marker if coordinates changed
+    if (path.startsWith('coordinates') && adminMap) refreshMapMarkers();
+}
+
+function addFeature() {
+    const c = churches[selectedChurchIndex];
+    if (!c.besonderheiten) c.besonderheiten = [];
+    c.besonderheiten.push('');
+    renderChurchDetail();
+    // Focus last input
+    const inputs = document.querySelectorAll('#feature-list input');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+}
+
+function updateFeature(index, value) {
+    churches[selectedChurchIndex].besonderheiten[index] = value;
+}
+
+function removeFeature(index) {
+    churches[selectedChurchIndex].besonderheiten.splice(index, 1);
+    renderChurchDetail();
+}
+
+function getAllPhotoNames() {
+    const names = new Set();
+    churches.forEach(c => { if (c.photoName) names.add(c.photoName); });
+    Object.keys(newImages).forEach(n => names.add(n));
+    return [...names].sort();
+}
+
+// ========== GEOCODING ==========
+async function geocodeAddress() {
+    const c = churches[selectedChurchIndex];
+    if (!c) return;
+    const query = `${c.address?.street || ''}, ${c.address?.zipCode || ''} ${c.address?.city || ''}`;
+    const resultEl = document.getElementById('geocode-result');
+    resultEl.textContent = 'Suche...';
+
+    try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`, {
+            headers: { 'Accept-Language': 'de' }
+        });
+        const data = await res.json();
+        if (data.length === 0) {
+            resultEl.textContent = '⚠ Keine Ergebnisse gefunden. Bitte Adresse prüfen.';
+            resultEl.style.color = '#f59e0b';
+            return;
+        }
+        const lat = parseFloat(parseFloat(data[0].lat).toFixed(4));
+        const lng = parseFloat(parseFloat(data[0].lon).toFixed(4));
+        c.coordinates.lat = lat;
+        c.coordinates.lng = lng;
+        document.getElementById('coord-lat').value = lat;
+        document.getElementById('coord-lng').value = lng;
+        resultEl.textContent = `✓ Gefunden: ${data[0].display_name.substring(0, 80)}...`;
+        resultEl.style.color = '#059669';
+        renderChurchList();
+        if (adminMap) refreshMapMarkers();
+    } catch (e) {
+        resultEl.textContent = '✗ Fehler bei der Suche: ' + e.message;
+        resultEl.style.color = '#dc2626';
+    }
+}
+
+// ========== LABELS EDITOR ==========
+function renderLabelsEditor() {
+    document.getElementById('labels-empty').style.display = 'none';
+    document.getElementById('labels-editor').style.display = '';
+    renderCitiesList();
+    renderDistrictsList();
+}
+
+function renderCitiesList() {
+    const container = document.getElementById('cities-list');
+    container.innerHTML = labels.cities.map((c, i) => `
+        <div style="background:white;border-radius:8px;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" value="${esc(c.name)}" onchange="updateLabel('cities', ${i}, 'name', this.value.toUpperCase()); this.value=this.value.toUpperCase();">
+                </div>
+                <div class="form-group" style="max-width:110px;">
+                    <label>Lat</label>
+                    <input type="number" step="0.001" value="${c.coordinates.lat}" onchange="updateLabel('cities', ${i}, 'coordinates.lat', parseFloat(this.value))">
+                </div>
+                <div class="form-group" style="max-width:110px;">
+                    <label>Lng</label>
+                    <input type="number" step="0.001" value="${c.coordinates.lng}" onchange="updateLabel('cities', ${i}, 'coordinates.lng', parseFloat(this.value))">
+                </div>
+                <div style="display:flex;align-items:flex-end;padding-bottom:2px;">
+                    <button class="btn btn-danger btn-sm" onclick="removeLabel('cities', ${i})">×</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderDistrictsList() {
+    const container = document.getElementById('districts-list');
+    container.innerHTML = labels.districts.map((d, i) => `
+        <div style="background:white;border-radius:8px;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" value="${esc(d.name)}" onchange="updateLabel('districts', ${i}, 'name', this.value)">
+                </div>
+                <div class="form-group" style="max-width:110px;">
+                    <label>Lat</label>
+                    <input type="number" step="0.001" value="${d.coordinates.lat}" onchange="updateLabel('districts', ${i}, 'coordinates.lat', parseFloat(this.value))">
+                </div>
+                <div class="form-group" style="max-width:110px;">
+                    <label>Lng</label>
+                    <input type="number" step="0.001" value="${d.coordinates.lng}" onchange="updateLabel('districts', ${i}, 'coordinates.lng', parseFloat(this.value))">
+                </div>
+                <div style="display:flex;align-items:flex-end;padding-bottom:2px;">
+                    <button class="btn btn-danger btn-sm" onclick="removeLabel('districts', ${i})">×</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateLabel(type, index, path, value) {
+    const parts = path.split('.');
+    let obj = labels[type][index];
+    for (let i = 0; i < parts.length - 1; i++) {
+        if (!obj[parts[i]]) obj[parts[i]] = {};
+        obj = obj[parts[i]];
+    }
+    obj[parts[parts.length - 1]] = value;
+}
+
+function addCity() {
+    labels.cities.push({ name: '', coordinates: { lat: 51.68, lng: 7.82 }, type: 'city' });
+    renderCitiesList();
+}
+
+function addDistrict() {
+    labels.districts.push({ name: '', coordinates: { lat: 51.68, lng: 7.82 } });
+    renderDistrictsList();
+}
+
+function removeLabel(type, index) {
+    const name = labels[type][index].name || '(Ohne Name)';
+    if (!confirm(`"${name}" wirklich löschen?`)) return;
+    labels[type].splice(index, 1);
+    if (type === 'cities') renderCitiesList(); else renderDistrictsList();
+}
+
+// ========== MAP ==========
+let mapInitialized = false;
+
+function initMap() {
+    if (mapInitialized) { refreshMapMarkers(); return; }
+    mapInitialized = true;
+
+    adminMap = L.map('admin-map', {
+        center: [51.68, 7.82],
+        zoom: 12,
+        minZoom: 10,
+        maxZoom: 16
+    });
+
+    // SVG overlay as background
+    const imageBounds = [[51.5566, 7.5406], [51.8860, 7.9974]];
+    L.imageOverlay(GITHUB_RAW_BASE + '/images/Map.svg', imageBounds, {
+        opacity: 1.0, interactive: false
+    }).addTo(adminMap);
+    adminMap.getContainer().style.backgroundColor = '#f5f5f5';
+
+    // Click handler for pin mode
+    adminMap.on('click', function(e) {
+        if (!pinMode) return;
+        churches.push({
+            name: '',
+            stadtteil: '',
+            address: { street: '', zipCode: '', city: 'Hamm' },
+            coordinates: { lat: parseFloat(e.latlng.lat.toFixed(4)), lng: parseFloat(e.latlng.lng.toFixed(4)) },
+            besonderheiten: [],
+            website: '',
+            buchungsLink: '',
+            photoName: ''
+        });
+        togglePinMode();
+        selectChurch(churches.length - 1);
+        // Switch to churches tab
+        document.querySelector('.tab[data-tab="churches"]').click();
+        toast('Neue Kirche an Kartenposition hinzugefügt', 'success');
+    });
+
+    refreshMapMarkers();
+}
+
+function refreshMapMarkers() {
+    if (!adminMap) return;
+    // Clear existing
+    churchMarkers.forEach(m => adminMap.removeLayer(m));
+    labelMarkers.forEach(m => adminMap.removeLayer(m));
+    churchMarkers = [];
+    labelMarkers = [];
+
+    // Church markers (draggable)
+    churches.forEach((c, i) => {
+        if (!c.coordinates?.lat || !c.coordinates?.lng) return;
+        const marker = L.marker([c.coordinates.lat, c.coordinates.lng], {
+            draggable: true,
+            title: c.name || 'Neue Kirche'
+        });
+        marker.bindTooltip(c.name || '(Ohne Name)', { permanent: false });
+
+        marker.on('dragend', function(e) {
+            const pos = e.target.getLatLng();
+            c.coordinates.lat = parseFloat(pos.lat.toFixed(4));
+            c.coordinates.lng = parseFloat(pos.lng.toFixed(4));
+            if (selectedChurchIndex === i) renderChurchDetail();
+            renderChurchList();
+        });
+
+        marker.on('click', function() {
+            selectChurch(i);
+            document.querySelector('.tab[data-tab="churches"]').click();
+        });
+
+        marker.addTo(adminMap);
+        churchMarkers.push(marker);
+    });
+
+    // Label markers (not draggable)
+    labels.cities.forEach(c => {
+        if (!c.coordinates?.lat) return;
+        const m = L.marker([c.coordinates.lat, c.coordinates.lng], {
+            icon: L.divIcon({
+                className: '',
+                html: `<div style="background:#1e40af;color:white;padding:4px 8px;border-radius:3px;font-size:11px;font-weight:700;white-space:nowrap;">${esc(c.name)}</div>`,
+                iconAnchor: [0, 0]
+            }),
+            interactive: false
+        }).addTo(adminMap);
+        labelMarkers.push(m);
+    });
+
+    labels.districts.forEach(d => {
+        if (!d.coordinates?.lat) return;
+        const m = L.marker([d.coordinates.lat, d.coordinates.lng], {
+            icon: L.divIcon({
+                className: '',
+                html: `<div style="color:#3b4d8a;font-size:11px;font-weight:600;white-space:nowrap;">${esc(d.name)}</div>`,
+                iconAnchor: [0, 0]
+            }),
+            interactive: false
+        }).addTo(adminMap);
+        labelMarkers.push(m);
+    });
+}
+
+function focusMapOnChurch(index) {
+    const c = churches[index];
+    if (!c?.coordinates?.lat || !adminMap) return;
+    adminMap.setView([c.coordinates.lat, c.coordinates.lng], 14);
+    // Highlight marker
+    if (churchMarkers[index]) {
+        churchMarkers[index].openTooltip();
+    }
+}
+
+function togglePinMode() {
+    pinMode = !pinMode;
+    const btn = document.getElementById('pin-mode-btn');
+    btn.textContent = pinMode ? '❌ Abbrechen' : '📌 Neuen Pin setzen';
+    btn.className = pinMode ? 'btn btn-danger btn-sm' : 'btn btn-primary btn-sm';
+    document.getElementById('map-info').textContent = pinMode
+        ? 'Klicke auf die Karte um eine neue Kirche zu platzieren.'
+        : 'Klicke auf einen Pin zum Bearbeiten. Pins können gezogen werden.';
+    if (adminMap) adminMap.getContainer().style.cursor = pinMode ? 'crosshair' : '';
+}
+
+// ========== VALIDATION ==========
+function validate() {
+    const errors = [];
+    churches.forEach((c, i) => {
+        const pre = `Kirche #${i + 1} "${c.name || '(Ohne Name)'}"`;
+        if (!c.name) errors.push(`${pre}: Name fehlt`);
+        if (!c.address?.street) errors.push(`${pre}: Straße fehlt`);
+        if (!c.address?.zipCode) errors.push(`${pre}: PLZ fehlt`);
+        else if (!/^[0-9]{5}$/.test(c.address.zipCode)) errors.push(`${pre}: PLZ ungültig (${c.address.zipCode})`);
+        if (!c.address?.city) errors.push(`${pre}: Stadt fehlt`);
+        if (!c.coordinates?.lat || !c.coordinates?.lng) errors.push(`${pre}: Koordinaten fehlen`);
+        else {
+            if (c.coordinates.lat < 51.4 || c.coordinates.lat > 52.0) errors.push(`${pre}: Breitengrad außerhalb des gültigen Bereichs (${c.coordinates.lat})`);
+            if (c.coordinates.lng < 7.3 || c.coordinates.lng > 8.2) errors.push(`${pre}: Längengrad außerhalb des gültigen Bereichs (${c.coordinates.lng})`);
+        }
+        if (c.website && c.website !== '' && !c.website.startsWith('https://')) errors.push(`${pre}: Website muss mit https:// beginnen`);
+        if (c.buchungsLink && c.buchungsLink !== '' && !c.buchungsLink.startsWith('https://')) errors.push(`${pre}: Buchungslink muss mit https:// beginnen`);
+    });
+
+    labels.cities.forEach((c, i) => {
+        if (!c.name) errors.push(`Stadt #${i + 1}: Name fehlt`);
+        if (!c.coordinates?.lat || !c.coordinates?.lng) errors.push(`Stadt "${c.name || i + 1}": Koordinaten fehlen`);
+    });
+    labels.districts.forEach((d, i) => {
+        if (!d.name) errors.push(`Stadtteil #${i + 1}: Name fehlt`);
+        if (!d.coordinates?.lat || !d.coordinates?.lng) errors.push(`Stadtteil "${d.name || i + 1}": Koordinaten fehlen`);
+    });
+
+    return errors;
+}
+
+// ========== DIFF ==========
+function updateDiff() {
+    const errors = validate();
+    const vBox = document.getElementById('validation-box');
+    if (errors.length > 0) {
+        vBox.innerHTML = `<div class="validation-errors">
+            <h4>⚠ ${errors.length} Validierungsfehler</h4>
+            <ul>${errors.map(e => `<li>${esc(e)}</li>`).join('')}</ul>
+        </div>`;
+    } else {
+        vBox.innerHTML = churches.length > 0 ? '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:12px;margin-bottom:16px;color:#065f46;font-size:14px;">✓ Alle Daten sind gültig</div>' : '';
+    }
+
+    const diffList = document.getElementById('diff-list');
+    if (!baselineChurches && !baselineLabels) {
+        diffList.innerHTML = '<div class="no-data"><p>Noch keine Baseline geladen (erst importieren)</p></div>';
+        return;
+    }
+
+    const diffs = [];
+
+    // Churches diff
+    const bLen = baselineChurches ? baselineChurches.length : 0;
+    churches.forEach((c, i) => {
+        if (i >= bLen) {
+            diffs.push({ type: 'added', text: `Kirche: ${c.name || '(Ohne Name)'}` });
+        } else if (JSON.stringify(c) !== JSON.stringify(baselineChurches[i])) {
+            const changes = [];
+            const b = baselineChurches[i];
+            if (c.name !== b.name) changes.push('Name');
+            if (JSON.stringify(c.address) !== JSON.stringify(b.address)) changes.push('Adresse');
+            if (JSON.stringify(c.coordinates) !== JSON.stringify(b.coordinates)) changes.push('Koordinaten');
+            if (JSON.stringify(c.besonderheiten) !== JSON.stringify(b.besonderheiten)) changes.push('Besonderheiten');
+            if (c.website !== b.website) changes.push('Website');
+            if (c.buchungsLink !== b.buchungsLink) changes.push('Buchungslink');
+            if (c.photoName !== b.photoName) changes.push('Foto');
+            diffs.push({ type: 'modified', text: `Kirche: ${c.name || b.name} (${changes.join(', ')})` });
+        }
+    });
+    if (baselineChurches) {
+        for (let i = churches.length; i < baselineChurches.length; i++) {
+            diffs.push({ type: 'removed', text: `Kirche: ${baselineChurches[i].name}` });
+        }
+    }
+
+    // Labels diff
+    if (baselineLabels) {
+        const bCities = baselineLabels.cities || [];
+        labels.cities.forEach((c, i) => {
+            if (i >= bCities.length) diffs.push({ type: 'added', text: `Stadt: ${c.name}` });
+            else if (JSON.stringify(c) !== JSON.stringify(bCities[i])) diffs.push({ type: 'modified', text: `Stadt: ${c.name}` });
+        });
+        for (let i = labels.cities.length; i < bCities.length; i++) {
+            diffs.push({ type: 'removed', text: `Stadt: ${bCities[i].name}` });
+        }
+        const bDistricts = baselineLabels.districts || [];
+        labels.districts.forEach((d, i) => {
+            if (i >= bDistricts.length) diffs.push({ type: 'added', text: `Stadtteil: ${d.name}` });
+            else if (JSON.stringify(d) !== JSON.stringify(bDistricts[i])) diffs.push({ type: 'modified', text: `Stadtteil: ${d.name}` });
+        });
+        for (let i = labels.districts.length; i < bDistricts.length; i++) {
+            diffs.push({ type: 'removed', text: `Stadtteil: ${bDistricts[i].name}` });
+        }
+    }
+
+    // New images
+    for (const name of Object.keys(newImages)) {
+        diffs.push({ type: 'added', text: `Bild: ${name}` });
+    }
+
+    if (diffs.length === 0) {
+        diffList.innerHTML = '<div class="no-data"><p>Keine Änderungen</p></div>';
+    } else {
+        diffList.innerHTML = diffs.map(d => `
+            <div class="diff-item ${d.type}">
+                <span class="badge">${d.type === 'added' ? 'Neu' : d.type === 'modified' ? 'Geändert' : 'Gelöscht'}</span>
+                ${esc(d.text)}
+            </div>
+        `).join('');
+    }
+}
+
+// ========== EXPORT ==========
+function buildChurchesJson() {
+    return JSON.stringify({
+        kirchenkreis: "Evangelischer Kirchenkreis Hamm",
+        status_check_date: new Date().toISOString().substring(0, 7),
+        gottesdienstorte: churches
+    }, null, 2);
+}
+
+function buildLabelsJson() {
+    return JSON.stringify(labels, null, 2);
+}
+
+function downloadFile(content, filename, type = 'application/json') {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function downloadChurchesJson() {
+    const errors = validate();
+    if (errors.length > 0 && !confirm(`Es gibt ${errors.length} Validierungsfehler. Trotzdem exportieren?`)) return;
+    downloadFile(buildChurchesJson(), 'churches.json');
+    toast('churches.json heruntergeladen', 'success');
+}
+
+function downloadLabelsJson() {
+    downloadFile(buildLabelsJson(), 'labels.json');
+    toast('labels.json heruntergeladen', 'success');
+}
+
+async function downloadImagesZip() {
+    const zip = new JSZip();
+    for (const [name, file] of Object.entries(newImages)) {
+        zip.file(name, file);
+    }
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'kirchenbilder.zip';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('Bilder-ZIP heruntergeladen', 'success');
+}
+
+// ========== UTILITIES ==========
+function esc(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+</script>
+</body>
+</html>

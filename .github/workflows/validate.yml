@@ -1,0 +1,56 @@
+name: Validate JSON Data
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/data/churches.json'
+      - 'docs/data/labels.json'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/data/churches.json'
+      - 'docs/data/labels.json'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install ajv-cli
+        run: npm install -g ajv-cli ajv-formats
+
+      - name: Validate churches.json syntax
+        run: python3 -c "import json; json.load(open('docs/data/churches.json'))"
+
+      - name: Validate labels.json syntax
+        run: python3 -c "import json; json.load(open('docs/data/labels.json'))"
+
+      - name: Validate churches.json against schema
+        run: ajv validate -s tools/schemas/churches.schema.json -d docs/data/churches.json
+
+      - name: Validate labels.json against schema
+        run: ajv validate -s tools/schemas/labels.schema.json -d docs/data/labels.json
+
+      - name: Check image references
+        run: |
+          python3 -c "
+          import json, os, sys
+          data = json.load(open('docs/data/churches.json'))
+          errors = []
+          for church in data['gottesdienstorte']:
+              photo = church.get('photoName', '')
+              if photo and not os.path.exists(f'docs/images/churches/{photo}'):
+                  errors.append(f'Bild nicht gefunden: {photo} (Kirche: {church[\"name\"]})')
+          if errors:
+              for e in errors:
+                  print(f'::error::{e}')
+              sys.exit(1)
+          print(f'Alle Bildreferenzen OK ({len(data[\"gottesdienstorte\"])} Kirchen geprüft)')
+          "
