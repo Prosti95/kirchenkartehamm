@@ -8,9 +8,8 @@ Mit dem **Admin-Tool** (`admin.html`) können Sie die Kirchendaten und Labels de
 
 ## 1. Admin-Tool öffnen
 
-- Navigieren Sie zum Ordner `tools/` im Projekt
-- **Doppelklick** auf `admin.html`
-- Die Seite öffnet sich im Browser
+- Öffnen Sie **https://prosti95.github.io/kirchenkartehamm/admin.html** im Browser
+- Alternativ: Im Projektordner `docs/admin.html` per Doppelklick öffnen
 
 ---
 

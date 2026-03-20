@@ -115,6 +115,9 @@
         .diff-item.modified .badge { background: #fde68a; }
         .diff-item.removed .badge { background: #fecaca; }
         .export-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+        .merge-box { margin-top:16px;padding:16px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px; }
+        .merge-box h4 { margin:0 0 12px 0;font-size:14px; }
+        .merge-item { display:flex;justify-content:space-between;align-items:center; }
         .validation-errors { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
         .validation-errors h4 { color: #991b1b; font-size: 14px; margin-bottom: 8px; }
         .validation-errors li { font-size: 13px; color: #991b1b; margin-left: 20px; margin-bottom: 4px; }
@@ -250,10 +253,23 @@
     <div class="diff-section">
         <h3>Dateien herunterladen</h3>
         <div class="export-actions">
-            <button class="btn btn-primary" onclick="downloadChurchesJson()">📥 churches.json</button>
-            <button class="btn btn-primary" onclick="downloadLabelsJson()">📥 labels.json</button>
+            <button class="btn btn-primary" onclick="downloadChurchesJson()">📥 churches.json (komplett)</button>
+            <button class="btn btn-primary" onclick="downloadLabelsJson()">📥 labels.json (komplett)</button>
             <button class="btn btn-primary" onclick="downloadImagesZip()" id="btn-download-images" disabled>📥 Neue Bilder (ZIP)</button>
         </div>
+        <div class="export-actions" style="margin-top:10px;">
+            <button class="btn btn-success" onclick="exportChanges()">📤 Nur Änderungen exportieren</button>
+        </div>
+        <p style="font-size:12px;color:#6b7280;margin-top:8px;">Exportiert nur geänderte, neue und gelöschte Kirchen als Patch-Datei.</p>
+    </div>
+    <div class="diff-section">
+        <h3>Änderungen importieren</h3>
+        <p style="font-size:13px;color:#6b7280;margin-bottom:12px;">Eine Änderungsdatei (<code>aenderungen_*.json</code>) laden und einzelne Änderungen übernehmen.</p>
+        <div class="drop-zone" id="patch-drop" style="max-width:400px;">
+            Änderungsdatei hierher ziehen oder klicken
+            <input type="file" accept=".json" style="display:none" id="patch-file-input">
+        </div>
+        <div id="merge-ui"></div>
     </div>
 </div>
 
@@ -412,6 +428,7 @@ function loadLabelsFile(file) {
 
 setupDropZone('churches-drop', 'churches-file-input', loadChurchesFile);
 setupDropZone('labels-drop', 'labels-file-input', loadLabelsFile);
+setupDropZone('patch-drop', 'patch-file-input', importPatch);
 
 // ========== IMAGES DROP ==========
 function setupImagesDrop() {
@@ -556,34 +573,37 @@ function renderChurchDetail() {
     panel.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #e5e7eb;">
             <h3 style="margin:0;border:none;padding:0;">${esc(c.name || 'Neue Kirche')}</h3>
-            <button class="btn btn-danger btn-sm" onclick="deleteChurch(${selectedChurchIndex})">🗑 Löschen</button>
+            <div style="display:flex;gap:6px;">
+                <button class="btn btn-secondary btn-sm" onclick="closeDetail()">✕ Schließen</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteChurch(${selectedChurchIndex})">🗑 Löschen</button>
+            </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
                 <label>Name <span class="required">*</span></label>
-                <input type="text" value="${esc(c.name)}" onchange="updateChurch('name', this.value)" class="${!c.name ? 'invalid' : ''}">
+                <input type="text" value="${esc(c.name)}" oninput="updateChurch('name', this.value); this.classList.toggle('invalid', !this.value)" class="${!c.name ? 'invalid' : ''}">
             </div>
             <div class="form-group">
                 <label>Stadtteil</label>
-                <input type="text" value="${esc(c.stadtteil || '')}" onchange="updateChurch('stadtteil', this.value)">
+                <input type="text" value="${esc(c.stadtteil || '')}" oninput="updateChurch('stadtteil', this.value)">
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
                 <label>Straße + Nr. <span class="required">*</span></label>
-                <input type="text" value="${esc(c.address?.street || '')}" onchange="updateChurch('address.street', this.value)">
+                <input type="text" value="${esc(c.address?.street || '')}" oninput="updateChurch('address.street', this.value); this.classList.toggle('invalid', !this.value)" class="${!c.address?.street ? 'invalid' : ''}">
             </div>
         </div>
         <div class="form-row">
             <div class="form-group" style="max-width:120px;">
                 <label>PLZ <span class="required">*</span></label>
-                <input type="text" value="${esc(c.address?.zipCode || '')}" maxlength="5" onchange="updateChurch('address.zipCode', this.value)" class="${c.address?.zipCode && !/^[0-9]{5}$/.test(c.address.zipCode) ? 'invalid' : ''}">
+                <input type="text" value="${esc(c.address?.zipCode || '')}" maxlength="5" oninput="updateChurch('address.zipCode', this.value); this.classList.toggle('invalid', !/^[0-9]{5}$/.test(this.value))" class="${!c.address?.zipCode || !/^[0-9]{5}$/.test(c.address.zipCode) ? 'invalid' : ''}">
             </div>
             <div class="form-group">
                 <label>Stadt <span class="required">*</span></label>
-                <input type="text" value="${esc(c.address?.city || '')}" onchange="updateChurch('address.city', this.value)">
+                <input type="text" value="${esc(c.address?.city || '')}" oninput="updateChurch('address.city', this.value); this.classList.toggle('invalid', !this.value)" class="${!c.address?.city ? 'invalid' : ''}">
             </div>
         </div>
 
@@ -592,11 +612,11 @@ function renderChurchDetail() {
             <div class="form-row">
                 <div class="form-group">
                     <label>Breitengrad (Lat)</label>
-                    <input type="number" step="0.0001" value="${c.coordinates?.lat || ''}" onchange="updateChurch('coordinates.lat', parseFloat(this.value))" id="coord-lat">
+                    <input type="number" step="0.0001" value="${c.coordinates?.lat || ''}" oninput="updateChurch('coordinates.lat', parseFloat(this.value))" id="coord-lat">
                 </div>
                 <div class="form-group">
                     <label>Längengrad (Lng)</label>
-                    <input type="number" step="0.0001" value="${c.coordinates?.lng || ''}" onchange="updateChurch('coordinates.lng', parseFloat(this.value))" id="coord-lng">
+                    <input type="number" step="0.0001" value="${c.coordinates?.lng || ''}" oninput="updateChurch('coordinates.lng', parseFloat(this.value))" id="coord-lng">
                 </div>
             </div>
             <div style="display:flex;gap:8px;margin-top:4px;">
@@ -617,13 +637,13 @@ function renderChurchDetail() {
             <div class="form-row">
                 <div class="form-group">
                     <label>Website</label>
-                    <input type="url" value="${esc(c.website || '')}" onchange="updateChurch('website', this.value)" placeholder="https://...">
+                    <input type="url" value="${esc(c.website || '')}" oninput="updateChurch('website', this.value)" placeholder="https://...">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Buchungslink</label>
-                    <input type="url" value="${esc(c.buchungsLink || '')}" onchange="updateChurch('buchungsLink', this.value)" placeholder="https://...">
+                    <input type="url" value="${esc(c.buchungsLink || '')}" oninput="updateChurch('buchungsLink', this.value)" placeholder="https://...">
                 </div>
             </div>
         </div>
@@ -676,6 +696,12 @@ function handleChurchPhoto(file) {
     autoSave();
     const sizeKB = Math.round(file.size / 1024);
     toast(`Bild "${file.name}" zugewiesen (${sizeKB} KB)${sizeKB > 200 ? ' ⚠ > 200 KB' : ''}`, sizeKB > 200 ? 'error' : 'success');
+}
+
+function closeDetail() {
+    selectedChurchIndex = -1;
+    renderChurchList();
+    document.getElementById('church-detail').innerHTML = '<div class="no-data"><p>Kirche aus der Liste auswählen</p></div>';
 }
 
 function updateChurch(path, value) {
@@ -924,30 +950,47 @@ function refreshMapMarkers() {
         churchMarkers.push(marker);
     });
 
-    // Label markers (not draggable)
-    labels.cities.forEach(c => {
+    // City label markers (draggable)
+    labels.cities.forEach((c, i) => {
         if (!c.coordinates?.lat) return;
         const m = L.marker([c.coordinates.lat, c.coordinates.lng], {
             icon: L.divIcon({
                 className: '',
-                html: `<div style="background:#1e40af;color:white;padding:4px 8px;border-radius:3px;font-size:11px;font-weight:700;white-space:nowrap;">${esc(c.name)}</div>`,
+                html: `<div style="background:#1e40af;color:white;padding:6px 14px;border-radius:3px;font-size:13px;font-weight:700;white-space:nowrap;letter-spacing:1px;cursor:grab;">${esc(c.name)}</div>`,
                 iconAnchor: [0, 0]
             }),
-            interactive: false
+            draggable: true
         }).addTo(adminMap);
+        m.bindTooltip('Stadt: ' + (c.name || ''), { permanent: false });
+        m.on('dragend', function(e) {
+            const pos = e.target.getLatLng();
+            c.coordinates.lat = parseFloat(pos.lat.toFixed(3));
+            c.coordinates.lng = parseFloat(pos.lng.toFixed(3));
+            renderCitiesList();
+            autoSave();
+        });
         labelMarkers.push(m);
     });
 
-    labels.districts.forEach(d => {
+    // District label markers (draggable)
+    labels.districts.forEach((d, i) => {
         if (!d.coordinates?.lat) return;
         const m = L.marker([d.coordinates.lat, d.coordinates.lng], {
             icon: L.divIcon({
                 className: '',
-                html: `<div style="color:#3b4d8a;font-size:11px;font-weight:600;white-space:nowrap;">${esc(d.name)}</div>`,
+                html: `<div style="color:#3b4d8a;font-size:12px;font-weight:600;white-space:nowrap;cursor:grab;">${esc(d.name)}</div>`,
                 iconAnchor: [0, 0]
             }),
-            interactive: false
+            draggable: true
         }).addTo(adminMap);
+        m.bindTooltip('Stadtteil: ' + (d.name || ''), { permanent: false });
+        m.on('dragend', function(e) {
+            const pos = e.target.getLatLng();
+            d.coordinates.lat = parseFloat(pos.lat.toFixed(3));
+            d.coordinates.lng = parseFloat(pos.lng.toFixed(3));
+            renderDistrictsList();
+            autoSave();
+        });
         labelMarkers.push(m);
     });
 }
@@ -1083,6 +1126,154 @@ function updateDiff() {
                 ${esc(d.text)}
             </div>
         `).join('');
+    }
+}
+
+// ========== PARTIAL EXPORT / IMPORT ==========
+function exportChanges() {
+    if (!baselineChurches) { toast('Erst Daten laden (Baseline nötig)', 'error'); return; }
+    const changes = [];
+    const baseMap = new Map();
+    baselineChurches.forEach(c => baseMap.set(c.name, c));
+    const currentNames = new Set();
+
+    churches.forEach(c => {
+        currentNames.add(c.name);
+        const base = baseMap.get(c.name);
+        if (!base) {
+            changes.push({ action: 'added', church: JSON.parse(JSON.stringify(c)) });
+        } else if (JSON.stringify(c) !== JSON.stringify(base)) {
+            changes.push({ action: 'modified', name: c.name, church: JSON.parse(JSON.stringify(c)) });
+        }
+    });
+    baselineChurches.forEach(b => {
+        if (!currentNames.has(b.name)) changes.push({ action: 'removed', name: b.name });
+    });
+
+    if (changes.length === 0) { toast('Keine Änderungen vorhanden', 'info'); return; }
+    const patch = { type: 'kirchenkarte-patch', exported: new Date().toISOString(), changes };
+    const date = new Date().toISOString().substring(0, 10);
+    downloadFile(JSON.stringify(patch, null, 2), `aenderungen_${date}.json`);
+    toast(`${changes.length} Änderung(en) exportiert`, 'success');
+}
+
+function importPatch(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+        try {
+            const patch = JSON.parse(e.target.result);
+            if (patch.type !== 'kirchenkarte-patch' || !Array.isArray(patch.changes)) {
+                toast('Keine gültige Änderungsdatei', 'error'); return;
+            }
+            renderMergeUI(patch);
+            toast(`${patch.changes.length} Änderung(en) geladen`, 'success');
+        } catch (err) { toast('Ungültige JSON-Datei', 'error'); }
+    };
+    reader.readAsText(file);
+}
+
+function renderMergeUI(patch) {
+    window._currentPatch = patch;
+    const container = document.getElementById('merge-ui');
+    const date = new Date(patch.exported).toLocaleString('de-DE');
+    let html = `<div class="merge-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h4>📋 ${patch.changes.length} Änderung(en) vom ${esc(date)}</h4>
+            <button class="btn btn-success btn-sm" onclick="applyAllPatchItems()">✓ Alle übernehmen</button>
+        </div>`;
+
+    patch.changes.forEach((change, i) => {
+        const name = change.church?.name || change.name;
+        const badge = change.action === 'added' ? 'Neu' : change.action === 'modified' ? 'Geändert' : 'Gelöscht';
+        const cls = change.action === 'added' ? 'added' : change.action === 'modified' ? 'modified' : 'removed';
+
+        let applied = false;
+        if (change.action === 'added') applied = churches.some(c => c.name === name);
+        else if (change.action === 'removed') applied = !churches.some(c => c.name === name);
+        else if (change.action === 'modified') {
+            const ex = churches.find(c => c.name === (change.name || name));
+            applied = ex && JSON.stringify(ex) === JSON.stringify(change.church);
+        }
+
+        let detail = '';
+        if (change.action === 'modified') {
+            const ex = churches.find(c => c.name === (change.name || name));
+            if (ex) {
+                const d = [];
+                const ch = change.church;
+                if (ch.stadtteil !== ex.stadtteil) d.push('Stadtteil');
+                if (JSON.stringify(ch.address) !== JSON.stringify(ex.address)) d.push('Adresse');
+                if (JSON.stringify(ch.coordinates) !== JSON.stringify(ex.coordinates)) d.push('Koordinaten');
+                if (JSON.stringify(ch.besonderheiten) !== JSON.stringify(ex.besonderheiten)) d.push('Besonderheiten');
+                if (ch.website !== ex.website) d.push('Website');
+                if (ch.buchungsLink !== ex.buchungsLink) d.push('Buchungslink');
+                if (ch.photoName !== ex.photoName) d.push('Foto');
+                detail = d.length ? ` (${d.join(', ')})` : '';
+            } else {
+                detail = ' → wird neu hinzugefügt';
+            }
+        }
+
+        html += `<div class="diff-item ${cls} merge-item" id="merge-item-${i}">
+            <div><span class="badge">${badge}</span> ${esc(name)}${detail}</div>
+            <div>${applied
+                ? '<span style="font-size:11px;color:#059669;">✓ Übernommen</span>'
+                : `<button class="btn btn-success btn-sm" onclick="applyPatchItem(${i})">Übernehmen</button>`
+            }</div>
+        </div>`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function applyPatchItem(index) {
+    const change = window._currentPatch.changes[index];
+    if (!change) return;
+    applyPatchItemSilent(change);
+    renderChurchList();
+    autoSave();
+    renderMergeUI(window._currentPatch);
+    toast(`Übernommen: ${change.church?.name || change.name}`, 'success');
+}
+
+function applyAllPatchItems() {
+    if (!window._currentPatch) return;
+    let count = 0;
+    window._currentPatch.changes.forEach(change => {
+        const name = change.church?.name || change.name;
+        if (change.action === 'added' && churches.some(c => c.name === name)) return;
+        if (change.action === 'removed' && !churches.some(c => c.name === name)) return;
+        if (change.action === 'modified') {
+            const ex = churches.find(c => c.name === (change.name || name));
+            if (ex && JSON.stringify(ex) === JSON.stringify(change.church)) return;
+        }
+        applyPatchItemSilent(change);
+        count++;
+    });
+    renderChurchList();
+    autoSave();
+    renderMergeUI(window._currentPatch);
+    toast(`${count} Änderung(en) übernommen`, 'success');
+}
+
+function applyPatchItemSilent(change) {
+    if (change.action === 'added') {
+        if (!churches.some(c => c.name === change.church.name)) {
+            churches.push(JSON.parse(JSON.stringify(change.church)));
+        }
+    } else if (change.action === 'modified') {
+        const idx = churches.findIndex(c => c.name === (change.name || change.church.name));
+        if (idx === -1) {
+            churches.push(JSON.parse(JSON.stringify(change.church)));
+        } else {
+            churches[idx] = JSON.parse(JSON.stringify(change.church));
+        }
+    } else if (change.action === 'removed') {
+        const idx = churches.findIndex(c => c.name === change.name);
+        if (idx >= 0) {
+            churches.splice(idx, 1);
+            if (selectedChurchIndex >= churches.length) selectedChurchIndex = -1;
+        }
     }
 }
 
