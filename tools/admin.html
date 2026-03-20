@@ -633,14 +633,49 @@ function renderChurchDetail() {
             <div class="form-row">
                 <div class="form-group">
                     <label>Dateiname</label>
-                    <select onchange="updateChurch('photoName', this.value)">
+                    <select id="photo-select" onchange="updateChurch('photoName', this.value)">
                         <option value="">– Kein Foto –</option>
                         ${photoOptions}
                     </select>
                 </div>
             </div>
+            <div class="drop-zone" style="padding:14px;font-size:12px;margin-top:6px;" id="church-photo-drop">
+                📷 Bild hierher ziehen oder klicken
+                <input type="file" accept="image/*" style="display:none" id="church-photo-input">
+            </div>
+            ${c.photoName && newImages[c.photoName] ? `<img src="${URL.createObjectURL(newImages[c.photoName])}" style="max-width:200px;max-height:120px;margin-top:8px;border-radius:6px;object-fit:cover;">` : ''}
         </div>
     `;
+
+    // Setup inline photo drop zone
+    setupChurchPhotoDrop();
+}
+
+function setupChurchPhotoDrop() {
+    const zone = document.getElementById('church-photo-drop');
+    const input = document.getElementById('church-photo-input');
+    if (!zone || !input) return;
+    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        if (e.dataTransfer.files[0]) handleChurchPhoto(e.dataTransfer.files[0]);
+    });
+    input.addEventListener('change', e => { if (e.target.files[0]) handleChurchPhoto(e.target.files[0]); });
+}
+
+function handleChurchPhoto(file) {
+    if (!file.type.startsWith('image/')) { toast('Nur Bilddateien erlaubt', 'error'); return; }
+    newImages[file.name] = file;
+    churches[selectedChurchIndex].photoName = file.name;
+    renderChurchDetail();
+    renderChurchList();
+    document.getElementById('btn-download-images').disabled = false;
+    autoSave();
+    const sizeKB = Math.round(file.size / 1024);
+    toast(`Bild "${file.name}" zugewiesen (${sizeKB} KB)${sizeKB > 200 ? ' ⚠ > 200 KB' : ''}`, sizeKB > 200 ? 'error' : 'success');
 }
 
 function updateChurch(path, value) {
