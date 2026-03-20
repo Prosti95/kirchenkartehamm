@@ -271,6 +271,55 @@ let labelMarkers = [];
 let pinMode = false;
 
 const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/Prosti95/kirchenkartehamm/main/docs';
+const STORAGE_KEY = 'kirchenkarte-admin';
+
+// ========== AUTO-SAVE ==========
+function autoSave() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            churches, labels, baselineChurches, baselineLabels, selectedChurchIndex,
+            savedAt: new Date().toISOString()
+        }));
+    } catch (e) { /* localStorage voll oder nicht verfügbar */ }
+}
+
+function autoRestore() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return false;
+        const data = JSON.parse(saved);
+        if (!data.churches || !data.churches.length) return false;
+        churches = data.churches;
+        labels = data.labels || { cities: [], districts: [] };
+        baselineChurches = data.baselineChurches;
+        baselineLabels = data.baselineLabels;
+        selectedChurchIndex = data.selectedChurchIndex ?? -1;
+        renderChurchList();
+        renderLabelsEditor();
+        const time = new Date(data.savedAt).toLocaleString('de-DE');
+        document.getElementById('status-indicator').textContent = `✓ Lokaler Stand von ${time}`;
+        toast('Lokaler Zwischenstand wiederhergestellt', 'info');
+        return true;
+    } catch (e) { return false; }
+}
+
+function clearAutoSave() {
+    localStorage.removeItem(STORAGE_KEY);
+}
+
+function hasUnsavedChanges() {
+    if (!baselineChurches) return churches.length > 0;
+    return JSON.stringify(churches) !== JSON.stringify(baselineChurches)
+        || JSON.stringify(labels) !== JSON.stringify(baselineLabels)
+        || Object.keys(newImages).length > 0;
+}
+
+window.addEventListener('beforeunload', function(e) {
+    if (hasUnsavedChanges()) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
 
 // ========== TABS ==========
 document.querySelectorAll('.tab').forEach(tab => {
@@ -313,6 +362,7 @@ async function loadFromGitHub() {
         document.getElementById('status-indicator').textContent = `✓ ${churches.length} Kirchen, ${labels.cities.length + labels.districts.length} Labels geladen`;
         renderChurchList();
         renderLabelsEditor();
+        autoSave();
         toast(`${churches.length} Kirchen und ${labels.cities.length + labels.districts.length} Labels geladen`, 'success');
     } catch (e) {
         document.getElementById('status-indicator').textContent = '✗ Fehler';
@@ -472,6 +522,7 @@ function addChurch() {
         photoName: ''
     });
     selectChurch(churches.length - 1);
+    autoSave();
     toast('Neue Kirche hinzugefügt', 'info');
 }
 
@@ -481,6 +532,7 @@ function deleteChurch(index) {
     selectedChurchIndex = -1;
     renderChurchList();
     document.getElementById('church-detail').innerHTML = '<div class="no-data"><p>Kirche aus der Liste auswählen</p></div>';
+    autoSave();
     toast('Kirche gelöscht', 'info');
 }
 
@@ -601,6 +653,7 @@ function updateChurch(path, value) {
     }
     obj[parts[parts.length - 1]] = value;
     renderChurchList();
+    autoSave();
     // Update map marker if coordinates changed
     if (path.startsWith('coordinates') && adminMap) refreshMapMarkers();
 }
@@ -617,11 +670,13 @@ function addFeature() {
 
 function updateFeature(index, value) {
     churches[selectedChurchIndex].besonderheiten[index] = value;
+    autoSave();
 }
 
 function removeFeature(index) {
     churches[selectedChurchIndex].besonderheiten.splice(index, 1);
     renderChurchDetail();
+    autoSave();
 }
 
 function getAllPhotoNames() {
@@ -658,6 +713,7 @@ async function geocodeAddress() {
         resultEl.textContent = `✓ Gefunden: ${data[0].display_name.substring(0, 80)}...`;
         resultEl.style.color = '#059669';
         renderChurchList();
+        autoSave();
         if (adminMap) refreshMapMarkers();
     } catch (e) {
         resultEl.textContent = '✗ Fehler bei der Suche: ' + e.message;
@@ -731,16 +787,19 @@ function updateLabel(type, index, path, value) {
         obj = obj[parts[i]];
     }
     obj[parts[parts.length - 1]] = value;
+    autoSave();
 }
 
 function addCity() {
     labels.cities.push({ name: '', coordinates: { lat: 51.68, lng: 7.82 }, type: 'city' });
     renderCitiesList();
+    autoSave();
 }
 
 function addDistrict() {
     labels.districts.push({ name: '', coordinates: { lat: 51.68, lng: 7.82 } });
     renderDistrictsList();
+    autoSave();
 }
 
 function removeLabel(type, index) {
@@ -748,6 +807,7 @@ function removeLabel(type, index) {
     if (!confirm(`"${name}" wirklich löschen?`)) return;
     labels[type].splice(index, 1);
     if (type === 'cities') renderCitiesList(); else renderDistrictsList();
+    autoSave();
 }
 
 // ========== MAP ==========
@@ -817,6 +877,7 @@ function refreshMapMarkers() {
             c.coordinates.lng = parseFloat(pos.lng.toFixed(4));
             if (selectedChurchIndex === i) renderChurchDetail();
             renderChurchList();
+            autoSave();
         });
 
         marker.on('click', function() {
@@ -1017,11 +1078,16 @@ function downloadChurchesJson() {
     const errors = validate();
     if (errors.length > 0 && !confirm(`Es gibt ${errors.length} Validierungsfehler. Trotzdem exportieren?`)) return;
     downloadFile(buildChurchesJson(), 'churches.json');
+    // Baseline aktualisieren nach Export
+    baselineChurches = JSON.parse(JSON.stringify(churches));
+    autoSave();
     toast('churches.json heruntergeladen', 'success');
 }
 
 function downloadLabelsJson() {
     downloadFile(buildLabelsJson(), 'labels.json');
+    baselineLabels = JSON.parse(JSON.stringify(labels));
+    autoSave();
     toast('labels.json heruntergeladen', 'success');
 }
 
@@ -1047,6 +1113,9 @@ function esc(str) {
     div.textContent = str;
     return div.innerHTML;
 }
+
+// ========== STARTUP ==========
+autoRestore();
 </script>
 </body>
 </html>
