@@ -9,13 +9,12 @@ Eine interaktive Karte aller Trauorte im Evangelischen Kirchenkreis Hamm.
 
 ## ✨ Features
 
-- 🗺️ Interaktive Karte mit 22 Gottesdienstorten in der Region Hamm
-- 📍 Violette Marker für alle Kirchen, grün beim Anklicken
-- 🖼️ Kirchenfotos in grünen Info-Boxen
-- 🌿 Hervorgehobener Hamm-Bereich (Kirchenkreis-Grenze)
-- 📱 Vollständig responsive und mobil-optimiert
-- 🔗 iFrame-ready für einfache Einbettung
-- ⚡ Schnell und performant mit Leaflet.js und OpenStreetMap
+- 🗺️ Interaktive Karte aller Trauorte im Kirchenkreis Hamm
+- 📍 Pins für jeden Gottesdienstort mit Foto und Infos
+- 📱 Optimiert für Handy, Tablet und Desktop
+- 🛠️ Admin-Tool zum einfachen Bearbeiten der Kirchendaten
+- 📤 Änderungen per E-Mail/OneDrive austauschen und zusammenführen
+- 🔄 Automatische Datenprüfung vor dem Speichern
 
 ## 📁 Projektstruktur
 

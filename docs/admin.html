@@ -296,6 +296,11 @@
         </div>
         <div id="merge-ui"></div>
     </div>
+    <div class="diff-section" style="border-top:2px solid #fecaca;">
+        <h3 style="color:#991b1b;">⚠️ Alle Änderungen verwerfen</h3>
+        <p style="font-size:13px;color:#6b7280;margin-bottom:12px;">Setzt alles auf den zuletzt geladenen Stand zurück. Alle nicht gespeicherten Änderungen gehen dabei verloren.</p>
+        <button class="btn btn-danger" onclick="discardAllChanges()">🗑 Alle Änderungen verwerfen</button>
+    </div>
 </div>
 
 <script>
@@ -346,6 +351,25 @@ function autoRestore() {
 
 function clearAutoSave() {
     localStorage.removeItem(STORAGE_KEY);
+}
+
+function discardAllChanges() {
+    if (!baselineChurches && !baselineLabels) {
+        toast('Keine Daten geladen – nichts zum Verwerfen', 'info');
+        return;
+    }
+    if (!confirm('Wirklich alle Änderungen verwerfen? Nicht gespeicherte Änderungen gehen verloren.')) return;
+    churches = JSON.parse(JSON.stringify(baselineChurches || []));
+    labels = JSON.parse(JSON.stringify(baselineLabels || { cities: [], districts: [] }));
+    newImages = {};
+    selectedChurchIndex = -1;
+    renderChurchList();
+    renderLabelsEditor();
+    document.getElementById('church-detail').innerHTML = '<div class="no-data"><p>Kirche aus der Liste auswählen</p></div>';
+    document.getElementById('btn-download-images').disabled = true;
+    autoSave();
+    updateDiff();
+    toast('Alle Änderungen verworfen', 'success');
 }
 
 function hasUnsavedChanges() {

@@ -1949,3 +1949,100 @@ test.describe('Patch Export/Import – Erweitert', () => {
     expect(coords.lng).toBeCloseTo(7.999, 2);
   });
 });
+
+// ============================================================
+// ALLE ÄNDERUNGEN VERWERFEN
+// ============================================================
+
+test.describe('Änderungen verwerfen', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(ADMIN_URL);
+    await loadData(page);
+  });
+
+  test('Verwerfen-Button existiert im Speichern-Tab', async ({ page }) => {
+    await page.locator('.tab[data-tab="export"]').click();
+    await expect(page.getByRole('button', { name: /Alle Änderungen verwerfen/ })).toBeVisible();
+  });
+
+  test('Verwerfen setzt Kirchendaten auf Ausgangszustand zurück', async ({ page }) => {
+    const originalCount = await page.evaluate(() => churches.length);
+    // Neue Kirche hinzufügen
+    await page.getByText('+ Neue Kirche').click();
+    expect(await page.evaluate(() => churches.length)).toBe(originalCount + 1);
+
+    // Verwerfen
+    await page.locator('.tab[data-tab="export"]').click();
+    page.on('dialog', d => d.accept());
+    await page.getByRole('button', { name: /Alle Änderungen verwerfen/ }).click();
+
+    expect(await page.evaluate(() => churches.length)).toBe(originalCount);
+  });
+
+  test('Verwerfen setzt bearbeitete Kirche zurück', async ({ page }) => {
+    const originalName = await page.evaluate(() => churches[0].name);
+    // Name ändern
+    await page.locator('#church-list .list-item').first().click();
+    const nameInput = page.locator('#church-detail input[type="text"]').first();
+    await nameInput.fill('GEÄNDERTER NAME');
+
+    // Verwerfen
+    await page.locator('.tab[data-tab="export"]').click();
+    page.on('dialog', d => d.accept());
+    await page.getByRole('button', { name: /Alle Änderungen verwerfen/ }).click();
+
+    expect(await page.evaluate(() => churches[0].name)).toBe(originalName);
+  });
+
+  test('Verwerfen leert neue Bilder', async ({ page }) => {
+    // Bild hinzufügen
+    await page.locator('.tab[data-tab="images"]').click();
+    const buffer = Buffer.alloc(100, 0xFF);
+    await page.locator('#images-file-input').setInputFiles({
+      name: 'test.jpg', mimeType: 'image/jpeg', buffer
+    });
+    expect(await page.evaluate(() => Object.keys(newImages).length)).toBe(1);
+
+    // Verwerfen
+    await page.locator('.tab[data-tab="export"]').click();
+    page.on('dialog', d => d.accept());
+    await page.getByRole('button', { name: /Alle Änderungen verwerfen/ }).click();
+
+    expect(await page.evaluate(() => Object.keys(newImages).length)).toBe(0);
+  });
+
+  test('Verwerfen abbrechen behält Änderungen', async ({ page }) => {
+    const originalCount = await page.evaluate(() => churches.length);
+    await page.getByText('+ Neue Kirche').click();
+
+    await page.locator('.tab[data-tab="export"]').click();
+    page.on('dialog', d => d.dismiss());
+    await page.getByRole('button', { name: /Alle Änderungen verwerfen/ }).click();
+
+    expect(await page.evaluate(() => churches.length)).toBe(originalCount + 1);
+  });
+
+  test('Verwerfen zeigt Erfolgsmeldung', async ({ page }) => {
+    await page.getByText('+ Neue Kirche').click();
+    await page.locator('.tab[data-tab="export"]').click();
+    page.on('dialog', d => d.accept());
+    await page.getByRole('button', { name: /Alle Änderungen verwerfen/ }).click();
+    await expect(page.getByText('Alle Änderungen verworfen')).toBeVisible();
+  });
+
+  test('Diff ist nach Verwerfen leer', async ({ page }) => {
+    // Kirche bearbeiten, damit Diff-Einträge existieren
+    await page.locator('#church-list .list-item').first().click();
+    const nameInput = page.locator('#church-detail input[type="text"]').first();
+    await nameInput.fill('GEÄNDERTER NAME');
+
+    await page.locator('.tab[data-tab="export"]').click();
+    await expect(page.locator('.diff-item')).toHaveCount(1); // 1 Änderung
+
+    page.on('dialog', d => d.accept());
+    await page.getByRole('button', { name: /Alle Änderungen verwerfen/ }).click();
+
+    // Diff sollte nun "Keine Änderungen" zeigen
+    await expect(page.locator('.diff-item')).toHaveCount(0);
+  });
+});
