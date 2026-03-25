@@ -1133,13 +1133,18 @@ function updateDiff() {
 function exportChanges() {
     if (!baselineChurches) { toast('Erst Daten laden (Baseline nötig)', 'error'); return; }
     const changes = [];
+
+    // Build a key that handles duplicate names by appending city
+    function churchKey(c) { return (c.name || '') + '|' + (c.address?.city || ''); }
+
     const baseMap = new Map();
-    baselineChurches.forEach(c => baseMap.set(c.name, c));
-    const currentNames = new Set();
+    baselineChurches.forEach(c => baseMap.set(churchKey(c), c));
+    const currentKeys = new Set();
 
     churches.forEach(c => {
-        currentNames.add(c.name);
-        const base = baseMap.get(c.name);
+        const key = churchKey(c);
+        currentKeys.add(key);
+        const base = baseMap.get(key);
         if (!base) {
             changes.push({ action: 'added', church: JSON.parse(JSON.stringify(c)) });
         } else if (JSON.stringify(c) !== JSON.stringify(base)) {
@@ -1147,7 +1152,7 @@ function exportChanges() {
         }
     });
     baselineChurches.forEach(b => {
-        if (!currentNames.has(b.name)) changes.push({ action: 'removed', name: b.name });
+        if (!currentKeys.has(churchKey(b))) changes.push({ action: 'removed', name: b.name });
     });
 
     if (changes.length === 0) { toast('Keine Änderungen vorhanden', 'info'); return; }

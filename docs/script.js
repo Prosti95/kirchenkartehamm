@@ -1,7 +1,7 @@
 // Globale Variablen
-let map;
-let currentActiveMarker = null;
-let markerGroup;
+var map;
+var currentActiveMarker = null;
+var markerGroup;
 
 // Pin-Icon aus SVG-Datei erstellen (zoom-abhaengige Groesse)
 const createPinIcon = (isActive, zoom) => {

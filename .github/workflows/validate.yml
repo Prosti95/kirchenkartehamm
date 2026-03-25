@@ -3,14 +3,8 @@ name: Validate JSON Data
 on:
   push:
     branches: [main]
-    paths:
-      - 'docs/data/churches.json'
-      - 'docs/data/labels.json'
   pull_request:
     branches: [main]
-    paths:
-      - 'docs/data/churches.json'
-      - 'docs/data/labels.json'
 
 jobs:
   validate:
@@ -54,3 +48,22 @@ jobs:
               sys.exit(1)
           print(f'Alle Bildreferenzen OK ({len(data[\"gottesdienstorte\"])} Kirchen geprüft)')
           "
+
+  playwright:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run Playwright tests
+        run: npx playwright test
