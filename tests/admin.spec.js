@@ -5,7 +5,7 @@ const ADMIN_URL = 'file:///' + path.resolve(__dirname, '../docs/admin.html').rep
 
 // Helper: load data from GitHub and wait for the church list to populate
 async function loadData(page) {
-  await page.getByText('Von GitHub laden').first().click();
+  await page.getByText('Aktuelle Daten laden').first().click();
   await page.locator('#church-list .list-item').first().waitFor({ timeout: 15000 });
 }
 
@@ -27,7 +27,7 @@ test.describe('Daten laden', () => {
     await expect(tabs).toHaveCount(5);
   });
 
-  test('Von GitHub laden füllt Kirchenliste', async ({ page }) => {
+  test('Aktuelle Daten laden füllt Kirchenliste', async ({ page }) => {
     await loadData(page);
     const count = await page.locator('#church-list .list-item').count();
     expect(count).toBeGreaterThan(20);
@@ -179,20 +179,20 @@ test.describe('Export', () => {
     await loadData(page);
   });
 
-  test('churches.json Download', async ({ page }) => {
+  test('Kirchendaten Download', async ({ page }) => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('churches.json (komplett)').click(),
+      page.getByRole('button', { name: /Kirchendaten herunterladen/ }).click(),
     ]);
     expect(download.suggestedFilename()).toBe('churches.json');
   });
 
-  test('labels.json Download', async ({ page }) => {
+  test('Beschriftungen Download', async ({ page }) => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('labels.json (komplett)').click(),
+      page.getByRole('button', { name: /Beschriftungen herunterladen/ }).click(),
     ]);
     expect(download.suggestedFilename()).toBe('labels.json');
   });
@@ -208,7 +208,7 @@ test.describe('Export', () => {
     await expect(page.locator('.diff-item.modified')).toBeVisible();
   });
 
-  test('Nur Änderungen exportieren erzeugt Patch-Datei', async ({ page }) => {
+  test('Meine Änderungen speichern erzeugt Änderungsdatei', async ({ page }) => {
     // Edit a church's website (keeps name intact so diff detects 'modified')
     await page.locator('#church-list .list-item').first().click();
     // Change website field
@@ -219,7 +219,7 @@ test.describe('Export', () => {
 
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('Nur Änderungen exportieren').click(),
+      page.getByRole('button', { name: /Meine Änderungen als Datei speichern/ }).click(),
     ]);
     expect(download.suggestedFilename()).toMatch(/^aenderungen_.*\.json$/);
 
@@ -233,11 +233,11 @@ test.describe('Export', () => {
     expect(content.changes[0].action).toBe('modified');
   });
 
-  test('Keine Änderungen → Patch-Export zeigt Hinweis', async ({ page }) => {
+  test('Keine Änderungen → Export zeigt Hinweis', async ({ page }) => {
     await page.locator('.tab[data-tab="export"]').click();
     // Wait for any loading toasts to disappear
     await page.waitForTimeout(3500);
-    await page.getByText('Nur Änderungen exportieren').click();
+    await page.getByRole('button', { name: /Meine Änderungen als Datei speichern/ }).click();
     await expect(page.locator('.toast').last()).toContainText('Keine Änderungen');
   });
 });
@@ -448,7 +448,7 @@ test.describe('Multi-Church Export/Import', () => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('Nur Änderungen exportieren').click(),
+      page.getByRole('button', { name: /Meine Änderungen als Datei speichern/ }).click(),
     ]);
 
     const stream = await download.createReadStream();
@@ -481,7 +481,7 @@ test.describe('Multi-Church Export/Import', () => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('Nur Änderungen exportieren').click(),
+      page.getByRole('button', { name: /Meine Änderungen als Datei speichern/ }).click(),
     ]);
 
     const stream = await download.createReadStream();
@@ -509,7 +509,7 @@ test.describe('Multi-Church Export/Import', () => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('Nur Änderungen exportieren').click(),
+      page.getByRole('button', { name: /Meine Änderungen als Datei speichern/ }).click(),
     ]);
     const stream = await download.createReadStream();
     const chunks = [];
@@ -866,7 +866,7 @@ test.describe('Export mit Validierungsfehler', () => {
     page.on('dialog', dialog => dialog.accept());
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('churches.json (komplett)').click(),
+      page.getByRole('button', { name: /Kirchendaten herunterladen/ }).click(),
     ]);
     expect(download.suggestedFilename()).toBe('churches.json');
   });
@@ -885,7 +885,7 @@ test.describe('Export mit Validierungsfehler', () => {
     // No download should happen — catch the timeout
     let downloaded = false;
     page.waitForEvent('download', { timeout: 2000 }).then(() => { downloaded = true; }).catch(() => {});
-    await page.getByText('churches.json (komplett)').click();
+    await page.getByRole('button', { name: /Kirchendaten herunterladen/ }).click();
     await page.waitForTimeout(2500);
     expect(downloaded).toBe(false);
   });
@@ -1414,7 +1414,7 @@ test.describe('JSON Export – Inhaltsvalidierung', () => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('churches.json (komplett)').click(),
+      page.getByRole('button', { name: /Kirchendaten herunterladen/ }).click(),
     ]);
     const stream = await download.createReadStream();
     const chunks = [];
@@ -1430,7 +1430,7 @@ test.describe('JSON Export – Inhaltsvalidierung', () => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('churches.json (komplett)').click(),
+      page.getByRole('button', { name: /Kirchendaten herunterladen/ }).click(),
     ]);
     const stream = await download.createReadStream();
     const chunks = [];
@@ -1451,7 +1451,7 @@ test.describe('JSON Export – Inhaltsvalidierung', () => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('labels.json (komplett)').click(),
+      page.getByRole('button', { name: /Beschriftungen herunterladen/ }).click(),
     ]);
     const stream = await download.createReadStream();
     const chunks = [];
@@ -1476,7 +1476,7 @@ test.describe('JSON Export – Inhaltsvalidierung', () => {
     page.on('dialog', d => d.accept()); // accept validation warning
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('churches.json (komplett)').click(),
+      page.getByRole('button', { name: /Kirchendaten herunterladen/ }).click(),
     ]);
     const stream = await download.createReadStream();
     const chunks = [];
@@ -1494,7 +1494,7 @@ test.describe('JSON Export – Inhaltsvalidierung', () => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('churches.json (komplett)').click(),
+      page.getByRole('button', { name: /Kirchendaten herunterladen/ }).click(),
     ]);
     const stream = await download.createReadStream();
     const chunks = [];
@@ -1513,7 +1513,7 @@ test.describe('JSON Export – Inhaltsvalidierung', () => {
     await expect(page.locator('.diff-item.modified')).toBeVisible();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('churches.json (komplett)').click(),
+      page.getByRole('button', { name: /Kirchendaten herunterladen/ }).click(),
     ]);
     await download.path(); // wait for download to finish
 
@@ -1535,7 +1535,7 @@ test.describe('JSON Export – Inhaltsvalidierung', () => {
     // Export labels
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('labels.json (komplett)').click(),
+      page.getByRole('button', { name: /Beschriftungen herunterladen/ }).click(),
     ]);
     await download.path();
 
@@ -1706,7 +1706,7 @@ test.describe('Patch Export/Import – Erweitert', () => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('Nur Änderungen exportieren').click(),
+      page.getByRole('button', { name: /Meine Änderungen als Datei speichern/ }).click(),
     ]);
     const stream = await download.createReadStream();
     const chunks = [];
@@ -1733,7 +1733,7 @@ test.describe('Patch Export/Import – Erweitert', () => {
     page.on('dialog', d => d.accept());
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('Nur Änderungen exportieren').click(),
+      page.getByRole('button', { name: /Meine Änderungen als Datei speichern/ }).click(),
     ]);
     const stream = await download.createReadStream();
     const chunks = [];
@@ -1755,7 +1755,7 @@ test.describe('Patch Export/Import – Erweitert', () => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('Nur Änderungen exportieren').click(),
+      page.getByRole('button', { name: /Meine Änderungen als Datei speichern/ }).click(),
     ]);
     const stream = await download.createReadStream();
     const chunks = [];
@@ -1798,7 +1798,7 @@ test.describe('Patch Export/Import – Erweitert', () => {
     page.on('dialog', d => d.accept());
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('Nur Änderungen exportieren').click(),
+      page.getByRole('button', { name: /Meine Änderungen als Datei speichern/ }).click(),
     ]);
     const stream = await download.createReadStream();
     const chunks = [];
@@ -1840,7 +1840,7 @@ test.describe('Patch Export/Import – Erweitert', () => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('Nur Änderungen exportieren').click(),
+      page.getByRole('button', { name: /Meine Änderungen als Datei speichern/ }).click(),
     ]);
     const stream = await download.createReadStream();
     const chunks = [];
@@ -1878,7 +1878,7 @@ test.describe('Patch Export/Import – Erweitert', () => {
 
     await page.locator('.tab[data-tab="export"]').click();
     await page.waitForTimeout(500);
-    await page.getByText('Nur Änderungen exportieren').click();
+    await page.getByRole('button', { name: /Meine Änderungen als Datei speichern/ }).click();
     await expect(page.locator('.toast.error')).toBeVisible();
   });
 
@@ -1891,7 +1891,7 @@ test.describe('Patch Export/Import – Erweitert', () => {
     await page.locator('.tab[data-tab="export"]').click();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByText('Nur Änderungen exportieren').click(),
+      page.getByRole('button', { name: /Meine Änderungen als Datei speichern/ }).click(),
     ]);
     const stream = await download.createReadStream();
     const chunks = [];

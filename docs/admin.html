@@ -144,27 +144,27 @@
 <div class="header">
     <h1>⛪ Kirchenkarte Admin</h1>
     <div class="header-actions">
-        <button class="btn btn-primary" onclick="loadFromGitHub()">📥 Von GitHub laden</button>
+        <button class="btn btn-primary" onclick="loadFromGitHub()">📥 Aktuelle Daten laden</button>
         <span id="status-indicator" style="font-size: 13px; opacity: 0.8;"></span>
     </div>
 </div>
 
 <div class="tabs">
     <div class="tab active" data-tab="churches">Kirchen</div>
-    <div class="tab" data-tab="labels">Labels</div>
+    <div class="tab" data-tab="labels">Beschriftungen</div>
     <div class="tab" data-tab="map">Karte</div>
     <div class="tab" data-tab="images">Bilder</div>
-    <div class="tab" data-tab="export">Export</div>
+    <div class="tab" data-tab="export">Speichern & Teilen</div>
 </div>
 
 <!-- KIRCHEN TAB -->
 <div class="content active" id="tab-churches">
     <div id="churches-empty" class="no-data">
         <p>Keine Daten geladen.</p>
-        <button class="btn btn-primary" onclick="loadFromGitHub()">📥 Von GitHub laden</button>
+        <button class="btn btn-primary" onclick="loadFromGitHub()">📥 Aktuelle Daten laden</button>
         <p style="margin-top:8px">oder</p>
         <div class="drop-zone" id="churches-drop" style="margin-top:8px;max-width:400px;margin-left:auto;margin-right:auto;">
-            churches.json hierher ziehen oder klicken
+            Kirchendatei hierher ziehen oder klicken
             <input type="file" accept=".json" style="display:none" id="churches-file-input">
         </div>
     </div>
@@ -190,11 +190,11 @@
 <!-- LABELS TAB -->
 <div class="content" id="tab-labels">
     <div id="labels-empty" class="no-data">
-        <p>Keine Label-Daten geladen.</p>
-        <button class="btn btn-primary" onclick="loadFromGitHub()">📥 Von GitHub laden</button>
+        <p>Keine Beschriftungen geladen.</p>
+        <button class="btn btn-primary" onclick="loadFromGitHub()">📥 Aktuelle Daten laden</button>
         <p style="margin-top:8px">oder</p>
         <div class="drop-zone" id="labels-drop" style="margin-top:8px;max-width:400px;margin-left:auto;margin-right:auto;">
-            labels.json hierher ziehen oder klicken
+            Beschriftungsdatei hierher ziehen oder klicken
             <input type="file" accept=".json" style="display:none" id="labels-file-input">
         </div>
     </div>
@@ -243,6 +243,29 @@
 
 <!-- EXPORT TAB -->
 <div class="content" id="tab-export">
+    <div style="background:linear-gradient(135deg,#eff6ff,#f0fdf4);border:1px solid #bfdbfe;border-radius:10px;padding:20px;margin-bottom:20px;">
+        <h3 style="font-size:15px;margin-bottom:12px;">📋 So funktioniert der Ablauf</h3>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:220px;">
+                <h4 style="font-size:13px;color:#1e40af;margin-bottom:6px;">👤 Für Zuständige einer Kirche</h4>
+                <ol style="font-size:13px;color:#374151;padding-left:20px;line-height:1.7;">
+                    <li>Oben auf „Aktuelle Daten laden" klicken</li>
+                    <li>Ihre Kirche suchen und Daten bearbeiten</li>
+                    <li>Hier auf „Meine Änderungen als Datei speichern" klicken</li>
+                    <li>Die Datei per E-Mail oder OneDrive an die Koordinatorin senden</li>
+                </ol>
+            </div>
+            <div style="flex:1;min-width:220px;">
+                <h4 style="font-size:13px;color:#059669;margin-bottom:6px;">👩‍💼 Für die Koordinatorin</h4>
+                <ol style="font-size:13px;color:#374151;padding-left:20px;line-height:1.7;">
+                    <li>Oben auf „Aktuelle Daten laden" klicken</li>
+                    <li>Unten die Änderungsdateien der Kolleg:innen einpflegen</li>
+                    <li>„Kirchendaten herunterladen" klicken</li>
+                    <li>Die Datei bei GitHub hochladen</li>
+                </ol>
+            </div>
+        </div>
+    </div>
     <div id="validation-box"></div>
     <div class="diff-section">
         <h3>Änderungen</h3>
@@ -251,20 +274,22 @@
         </div>
     </div>
     <div class="diff-section">
-        <h3>Dateien herunterladen</h3>
+        <h3>Für die Koordinatorin: Vollständige Dateien herunterladen</h3>
+        <p style="font-size:13px;color:#6b7280;margin-bottom:12px;">Nachdem Sie alle Änderungen eingepflegt haben, laden Sie hier die fertigen Dateien herunter.</p>
         <div class="export-actions">
-            <button class="btn btn-primary" onclick="downloadChurchesJson()">📥 churches.json (komplett)</button>
-            <button class="btn btn-primary" onclick="downloadLabelsJson()">📥 labels.json (komplett)</button>
-            <button class="btn btn-primary" onclick="downloadImagesZip()" id="btn-download-images" disabled>📥 Neue Bilder (ZIP)</button>
+            <button class="btn btn-primary" onclick="downloadChurchesJson()">📥 Kirchendaten herunterladen</button>
+            <button class="btn btn-primary" onclick="downloadLabelsJson()">📥 Beschriftungen herunterladen</button>
+            <button class="btn btn-primary" onclick="downloadImagesZip()" id="btn-download-images" disabled>📥 Neue Bilder herunterladen</button>
         </div>
-        <div class="export-actions" style="margin-top:10px;">
-            <button class="btn btn-success" onclick="exportChanges()">📤 Nur Änderungen exportieren</button>
+        <div class="export-actions" style="margin-top:16px;">
+            <h3 style="width:100%;margin-bottom:4px;">Für Zuständige: Eigene Änderungen weitergeben</h3>
+            <p style="font-size:13px;color:#6b7280;margin-bottom:8px;width:100%;">Erstellt eine Datei mit Ihren Änderungen, die Sie per E-Mail oder OneDrive an die Koordinatorin senden können.</p>
+            <button class="btn btn-success" onclick="exportChanges()">📤 Meine Änderungen als Datei speichern</button>
         </div>
-        <p style="font-size:12px;color:#6b7280;margin-top:8px;">Exportiert nur geänderte, neue und gelöschte Kirchen als Patch-Datei.</p>
     </div>
     <div class="diff-section">
-        <h3>Änderungen importieren</h3>
-        <p style="font-size:13px;color:#6b7280;margin-bottom:12px;">Eine Änderungsdatei (<code>aenderungen_*.json</code>) laden und einzelne Änderungen übernehmen.</p>
+        <h3>Änderungen von Kolleg:innen einpflegen</h3>
+        <p style="font-size:13px;color:#6b7280;margin-bottom:12px;">Laden Sie hier die Änderungsdateien, die Sie von Kolleg:innen per E-Mail oder OneDrive erhalten haben.</p>
         <div class="drop-zone" id="patch-drop" style="max-width:400px;">
             Änderungsdatei hierher ziehen oder klicken
             <input type="file" accept=".json" style="display:none" id="patch-file-input">
@@ -375,11 +400,11 @@ async function loadFromGitHub() {
         labels = { cities: lData.cities || [], districts: lData.districts || [] };
         baselineLabels = JSON.parse(JSON.stringify(labels));
 
-        document.getElementById('status-indicator').textContent = `✓ ${churches.length} Kirchen, ${labels.cities.length + labels.districts.length} Labels geladen`;
+        document.getElementById('status-indicator').textContent = `✓ ${churches.length} Kirchen, ${labels.cities.length + labels.districts.length} Beschriftungen geladen`;
         renderChurchList();
         renderLabelsEditor();
         autoSave();
-        toast(`${churches.length} Kirchen und ${labels.cities.length + labels.districts.length} Labels geladen`, 'success');
+        toast(`${churches.length} Kirchen und ${labels.cities.length + labels.districts.length} Beschriftungen geladen`, 'success');
     } catch (e) {
         document.getElementById('status-indicator').textContent = '✗ Fehler';
         toast('Fehler beim Laden: ' + e.message, 'error');
@@ -611,17 +636,17 @@ function renderChurchDetail() {
             <h4>Koordinaten <span class="required">*</span></h4>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Breitengrad (Lat)</label>
+                    <label>Breitengrad</label>
                     <input type="number" step="0.0001" value="${c.coordinates?.lat || ''}" oninput="updateChurch('coordinates.lat', parseFloat(this.value))" id="coord-lat">
                 </div>
                 <div class="form-group">
-                    <label>Längengrad (Lng)</label>
+                    <label>Längengrad</label>
                     <input type="number" step="0.0001" value="${c.coordinates?.lng || ''}" oninput="updateChurch('coordinates.lng', parseFloat(this.value))" id="coord-lng">
                 </div>
             </div>
             <div style="display:flex;gap:8px;margin-top:4px;">
-                <button class="btn btn-secondary btn-sm" onclick="geocodeAddress()">🔍 Koordinaten aus Adresse suchen</button>
-                <a href="https://nominatim.openstreetmap.org/ui/search.html" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="text-decoration:none;">🌐 Nominatim öffnen</a>
+                <button class="btn btn-secondary btn-sm" onclick="geocodeAddress()">🔍 Adresse auf Karte finden</button>
+                <a href="https://nominatim.openstreetmap.org/ui/search.html" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="text-decoration:none;">🌐 Adresse online nachschlagen</a>
             </div>
             <div id="geocode-result" style="font-size:12px;margin-top:6px;color:#059669;"></div>
         </div>
@@ -1062,7 +1087,7 @@ function updateDiff() {
 
     const diffList = document.getElementById('diff-list');
     if (!baselineChurches && !baselineLabels) {
-        diffList.innerHTML = '<div class="no-data"><p>Noch keine Baseline geladen (erst importieren)</p></div>';
+        diffList.innerHTML = '<div class="no-data"><p>Bitte laden Sie zuerst die aktuellen Daten</p></div>';
         return;
     }
 
@@ -1131,7 +1156,7 @@ function updateDiff() {
 
 // ========== PARTIAL EXPORT / IMPORT ==========
 function exportChanges() {
-    if (!baselineChurches) { toast('Erst Daten laden (Baseline nötig)', 'error'); return; }
+    if (!baselineChurches) { toast('Bitte laden Sie zuerst die aktuellen Daten', 'error'); return; }
     const changes = [];
 
     // Build a key that handles duplicate names by appending city
@@ -1312,14 +1337,14 @@ function downloadChurchesJson() {
     // Baseline aktualisieren nach Export
     baselineChurches = JSON.parse(JSON.stringify(churches));
     autoSave();
-    toast('churches.json heruntergeladen', 'success');
+    toast('Kirchendaten heruntergeladen', 'success');
 }
 
 function downloadLabelsJson() {
     downloadFile(buildLabelsJson(), 'labels.json');
     baselineLabels = JSON.parse(JSON.stringify(labels));
     autoSave();
-    toast('labels.json heruntergeladen', 'success');
+    toast('Beschriftungen heruntergeladen', 'success');
 }
 
 async function downloadImagesZip() {
@@ -1334,7 +1359,7 @@ async function downloadImagesZip() {
     a.download = 'kirchenbilder.zip';
     a.click();
     URL.revokeObjectURL(url);
-    toast('Bilder-ZIP heruntergeladen', 'success');
+    toast('Bilder heruntergeladen', 'success');
 }
 
 // ========== UTILITIES ==========
