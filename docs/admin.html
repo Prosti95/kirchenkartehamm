@@ -1117,65 +1117,140 @@ function updateDiff() {
 
     const diffs = [];
 
-    // Churches diff
-    const bLen = baselineChurches ? baselineChurches.length : 0;
-    churches.forEach((c, i) => {
-        if (i >= bLen) {
-            diffs.push({ type: 'added', text: `Kirche: ${c.name || '(Ohne Name)'}` });
-        } else if (JSON.stringify(c) !== JSON.stringify(baselineChurches[i])) {
-            const changes = [];
-            const b = baselineChurches[i];
-            if (c.name !== b.name) changes.push('Name');
-            if (JSON.stringify(c.address) !== JSON.stringify(b.address)) changes.push('Adresse');
-            if (JSON.stringify(c.coordinates) !== JSON.stringify(b.coordinates)) changes.push('Koordinaten');
-            if (JSON.stringify(c.besonderheiten) !== JSON.stringify(b.besonderheiten)) changes.push('Besonderheiten');
-            if (c.website !== b.website) changes.push('Website');
-            if (c.buchungsLink !== b.buchungsLink) changes.push('Buchungslink');
-            if (c.photoName !== b.photoName) changes.push('Foto');
-            diffs.push({ type: 'modified', text: `Kirche: ${c.name || b.name} (${changes.join(', ')})` });
-        }
-    });
+    // Churches diff – hybrid matching (key-based first, then positional for unmatched)
+    function _ck(c) { return (c.name || '') + '|' + (c.address?.city || ''); }
+    function _churchChanges(c, b) {
+        const ch = [];
+        if (c.name !== b.name) ch.push('Name');
+        if (JSON.stringify(c.address) !== JSON.stringify(b.address)) ch.push('Adresse');
+        if (JSON.stringify(c.coordinates) !== JSON.stringify(b.coordinates)) ch.push('Koordinaten');
+        if (JSON.stringify(c.besonderheiten) !== JSON.stringify(b.besonderheiten)) ch.push('Besonderheiten');
+        if (c.website !== b.website) ch.push('Website');
+        if (c.buchungsLink !== b.buchungsLink) ch.push('Buchungslink');
+        if (c.photoName !== b.photoName) ch.push('Foto');
+        return ch;
+    }
     if (baselineChurches) {
-        for (let i = churches.length; i < baselineChurches.length; i++) {
-            diffs.push({ type: 'removed', text: `Kirche: ${baselineChurches[i].name}` });
+        const baseMap = new Map();
+        baselineChurches.forEach((c, i) => baseMap.set(_ck(c), { church: c, index: i }));
+        const matchedCurr = new Set();
+        const matchedBase = new Set();
+        // Phase 1: match by key (name|city)
+        churches.forEach((c, i) => {
+            const base = baseMap.get(_ck(c));
+            if (base && !matchedBase.has(base.index)) {
+                matchedCurr.add(i);
+                matchedBase.add(base.index);
+                if (JSON.stringify(c) !== JSON.stringify(base.church)) {
+                    const changes = _churchChanges(c, base.church);
+                    diffs.push({ type: 'modified', text: `Kirche: ${c.name || base.church.name} (${changes.join(', ')})`, entity: 'church', index: i, baselineIndex: base.index });
+                }
+            }
+        });
+        // Phase 2: pair remaining unmatched by position (handles name changes)
+        const unmCurr = []; churches.forEach((c, i) => { if (!matchedCurr.has(i)) unmCurr.push({ c, i }); });
+        const unmBase = []; baselineChurches.forEach((c, i) => { if (!matchedBase.has(i)) unmBase.push({ c, i }); });
+        const pairLen = Math.min(unmCurr.length, unmBase.length);
+        for (let k = 0; k < pairLen; k++) {
+            const changes = _churchChanges(unmCurr[k].c, unmBase[k].c);
+            diffs.push({ type: 'modified', text: `Kirche: ${unmCurr[k].c.name || unmBase[k].c.name} (${changes.join(', ')})`, entity: 'church', index: unmCurr[k].i, baselineIndex: unmBase[k].i });
         }
+        for (let k = pairLen; k < unmCurr.length; k++) {
+            diffs.push({ type: 'added', text: `Kirche: ${unmCurr[k].c.name || '(Ohne Name)'}`, entity: 'church', index: unmCurr[k].i });
+        }
+        for (let k = pairLen; k < unmBase.length; k++) {
+            diffs.push({ type: 'removed', text: `Kirche: ${unmBase[k].c.name}`, entity: 'church', baselineIndex: unmBase[k].i });
+        }
+    } else {
+        churches.forEach((c, i) => {
+            diffs.push({ type: 'added', text: `Kirche: ${c.name || '(Ohne Name)'}`, entity: 'church', index: i });
+        });
     }
 
     // Labels diff
     if (baselineLabels) {
         const bCities = baselineLabels.cities || [];
         labels.cities.forEach((c, i) => {
-            if (i >= bCities.length) diffs.push({ type: 'added', text: `Stadt: ${c.name}` });
-            else if (JSON.stringify(c) !== JSON.stringify(bCities[i])) diffs.push({ type: 'modified', text: `Stadt: ${c.name}` });
+            if (i >= bCities.length) diffs.push({ type: 'added', text: `Stadt: ${c.name}`, entity: 'city', index: i });
+            else if (JSON.stringify(c) !== JSON.stringify(bCities[i])) diffs.push({ type: 'modified', text: `Stadt: ${c.name}`, entity: 'city', index: i });
         });
         for (let i = labels.cities.length; i < bCities.length; i++) {
-            diffs.push({ type: 'removed', text: `Stadt: ${bCities[i].name}` });
+            diffs.push({ type: 'removed', text: `Stadt: ${bCities[i].name}`, entity: 'city', index: i });
         }
         const bDistricts = baselineLabels.districts || [];
         labels.districts.forEach((d, i) => {
-            if (i >= bDistricts.length) diffs.push({ type: 'added', text: `Stadtteil: ${d.name}` });
-            else if (JSON.stringify(d) !== JSON.stringify(bDistricts[i])) diffs.push({ type: 'modified', text: `Stadtteil: ${d.name}` });
+            if (i >= bDistricts.length) diffs.push({ type: 'added', text: `Stadtteil: ${d.name}`, entity: 'district', index: i });
+            else if (JSON.stringify(d) !== JSON.stringify(bDistricts[i])) diffs.push({ type: 'modified', text: `Stadtteil: ${d.name}`, entity: 'district', index: i });
         });
         for (let i = labels.districts.length; i < bDistricts.length; i++) {
-            diffs.push({ type: 'removed', text: `Stadtteil: ${bDistricts[i].name}` });
+            diffs.push({ type: 'removed', text: `Stadtteil: ${bDistricts[i].name}`, entity: 'district', index: i });
         }
     }
 
     // New images
     for (const name of Object.keys(newImages)) {
-        diffs.push({ type: 'added', text: `Bild: ${name}` });
+        diffs.push({ type: 'added', text: `Bild: ${name}`, entity: 'image', key: name });
     }
 
     if (diffs.length === 0) {
         diffList.innerHTML = '<div class="no-data"><p>Keine Änderungen</p></div>';
     } else {
-        diffList.innerHTML = diffs.map(d => `
-            <div class="diff-item ${d.type}">
-                <span class="badge">${d.type === 'added' ? 'Neu' : d.type === 'modified' ? 'Geändert' : 'Gelöscht'}</span>
-                ${esc(d.text)}
+        // Store diffs for revert access
+        window._currentDiffs = diffs;
+        diffList.innerHTML = diffs.map((d, i) => `
+            <div class="diff-item ${d.type}" style="justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="badge">${d.type === 'added' ? 'Neu' : d.type === 'modified' ? 'Geändert' : 'Gelöscht'}</span>
+                    ${esc(d.text)}
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="revertChange(${i})" title="Diese Änderung rückgängig machen">↩ Rückgängig</button>
             </div>
         `).join('');
     }
+}
+
+function revertChange(diffIndex) {
+    const d = window._currentDiffs?.[diffIndex];
+    if (!d) return;
+
+    if (d.entity === 'church') {
+        if (d.type === 'modified') {
+            churches[d.index] = JSON.parse(JSON.stringify(baselineChurches[d.baselineIndex]));
+        } else if (d.type === 'added') {
+            churches.splice(d.index, 1);
+            if (selectedChurchIndex >= churches.length) selectedChurchIndex = -1;
+        } else if (d.type === 'removed') {
+            const insertAt = Math.min(d.baselineIndex, churches.length);
+            churches.splice(insertAt, 0, JSON.parse(JSON.stringify(baselineChurches[d.baselineIndex])));
+        }
+        renderChurchList();
+        if (selectedChurchIndex === d.index) renderChurchDetail();
+    } else if (d.entity === 'city') {
+        if (d.type === 'modified') {
+            labels.cities[d.index] = JSON.parse(JSON.stringify(baselineLabels.cities[d.index]));
+        } else if (d.type === 'added') {
+            labels.cities.splice(d.index, 1);
+        } else if (d.type === 'removed') {
+            labels.cities.splice(d.index, 0, JSON.parse(JSON.stringify(baselineLabels.cities[d.index])));
+        }
+        renderCitiesList();
+    } else if (d.entity === 'district') {
+        if (d.type === 'modified') {
+            labels.districts[d.index] = JSON.parse(JSON.stringify(baselineLabels.districts[d.index]));
+        } else if (d.type === 'added') {
+            labels.districts.splice(d.index, 1);
+        } else if (d.type === 'removed') {
+            labels.districts.splice(d.index, 0, JSON.parse(JSON.stringify(baselineLabels.districts[d.index])));
+        }
+        renderDistrictsList();
+    } else if (d.entity === 'image') {
+        delete newImages[d.key];
+        document.getElementById('btn-download-images').disabled = Object.keys(newImages).length === 0;
+    }
+
+    autoSave();
+    updateDiff();
+    toast('Änderung rückgängig gemacht', 'info');
 }
 
 // ========== PARTIAL EXPORT / IMPORT ==========

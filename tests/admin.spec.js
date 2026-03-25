@@ -2046,3 +2046,102 @@ test.describe('Änderungen verwerfen', () => {
     await expect(page.locator('.diff-item')).toHaveCount(0);
   });
 });
+
+// ============================================================
+// EINZELNE ÄNDERUNG RÜCKGÄNGIG
+// ============================================================
+
+test.describe('Einzelne Änderung rückgängig', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(ADMIN_URL);
+    await loadData(page);
+  });
+
+  test('Jede Diff-Zeile hat einen Rückgängig-Button', async ({ page }) => {
+    // Änderung erzeugen
+    await page.locator('#church-list .list-item').first().click();
+    await page.locator('#church-detail input[type="text"]').first().fill('TEST-REVERT');
+    await page.locator('.tab[data-tab="export"]').click();
+    const items = page.locator('.diff-item');
+    await expect(items).toHaveCount(1);
+    await expect(items.first().getByRole('button', { name: /Rückgängig/ })).toBeVisible();
+  });
+
+  test('Rückgängig bei geänderter Kirche setzt Original zurück', async ({ page }) => {
+    const originalName = await page.evaluate(() => churches[0].name);
+    await page.locator('#church-list .list-item').first().click();
+    await page.locator('#church-detail input[type="text"]').first().fill('REVERT-TEST');
+
+    await page.locator('.tab[data-tab="export"]').click();
+    await page.locator('.diff-item').first().getByRole('button', { name: /Rückgängig/ }).click();
+
+    expect(await page.evaluate(() => churches[0].name)).toBe(originalName);
+    await expect(page.locator('.diff-item')).toHaveCount(0);
+  });
+
+  test('Rückgängig bei neuer Kirche entfernt sie', async ({ page }) => {
+    const originalCount = await page.evaluate(() => churches.length);
+    await page.getByText('+ Neue Kirche').click();
+
+    await page.locator('.tab[data-tab="export"]').click();
+    await page.locator('.diff-item.added').first().getByRole('button', { name: /Rückgängig/ }).click();
+
+    expect(await page.evaluate(() => churches.length)).toBe(originalCount);
+  });
+
+  test('Rückgängig bei gelöschter Kirche stellt sie wieder her', async ({ page }) => {
+    const originalCount = await page.evaluate(() => churches.length);
+    const deletedName = await page.evaluate(() => churches[0].name);
+
+    // Kirche löschen
+    await page.locator('#church-list .list-item').first().click();
+    page.on('dialog', d => d.accept());
+    await page.getByText('🗑 Löschen').click();
+    expect(await page.evaluate(() => churches.length)).toBe(originalCount - 1);
+
+    // Rückgängig
+    await page.locator('.tab[data-tab="export"]').click();
+    await page.locator('.diff-item.removed').first().getByRole('button', { name: /Rückgängig/ }).click();
+
+    expect(await page.evaluate(() => churches.length)).toBe(originalCount);
+    expect(await page.evaluate(() => churches[0].name)).toBe(deletedName);
+  });
+
+  test('Rückgängig bei geänderter Stadt setzt Original zurück', async ({ page }) => {
+    await page.locator('.tab[data-tab="labels"]').click();
+    const originalName = await page.evaluate(() => labels.cities[0].name);
+    const cityInput = page.locator('#cities-list input[type="text"]').first();
+    await cityInput.fill('REVERT-STADT');
+    await cityInput.dispatchEvent('change');
+
+    await page.locator('.tab[data-tab="export"]').click();
+    const cityDiff = page.locator('.diff-item', { hasText: 'Stadt:' });
+    await cityDiff.first().getByRole('button', { name: /Rückgängig/ }).click();
+
+    expect(await page.evaluate(() => labels.cities[0].name)).toBe(originalName);
+  });
+
+  test('Rückgängig bei neuem Bild entfernt es', async ({ page }) => {
+    await page.locator('.tab[data-tab="images"]').click();
+    const buffer = Buffer.alloc(100, 0xFF);
+    await page.locator('#images-file-input').setInputFiles({
+      name: 'revert-test.jpg', mimeType: 'image/jpeg', buffer
+    });
+
+    await page.locator('.tab[data-tab="export"]').click();
+    const imageDiff = page.locator('.diff-item', { hasText: 'Bild:' });
+    await imageDiff.first().getByRole('button', { name: /Rückgängig/ }).click();
+
+    expect(await page.evaluate(() => Object.keys(newImages).length)).toBe(0);
+  });
+
+  test('Toast wird bei Rückgängig angezeigt', async ({ page }) => {
+    await page.locator('#church-list .list-item').first().click();
+    await page.locator('#church-detail input[type="text"]').first().fill('TOAST-TEST');
+
+    await page.locator('.tab[data-tab="export"]').click();
+    await page.locator('.diff-item').first().getByRole('button', { name: /Rückgängig/ }).click();
+
+    await expect(page.getByText('Änderung rückgängig gemacht')).toBeVisible();
+  });
+});
