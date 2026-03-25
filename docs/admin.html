@@ -1006,6 +1006,7 @@ function refreshMapMarkers() {
             icon: L.divIcon({
                 className: '',
                 html: `<div style="background:#1e40af;color:white;padding:6px 14px;border-radius:3px;font-size:13px;font-weight:700;white-space:nowrap;letter-spacing:1px;cursor:grab;">${esc(c.name)}</div>`,
+                iconSize: null,
                 iconAnchor: [0, 0]
             }),
             draggable: true
@@ -1028,6 +1029,7 @@ function refreshMapMarkers() {
             icon: L.divIcon({
                 className: '',
                 html: `<div style="color:#3b4d8a;font-size:12px;font-weight:600;white-space:nowrap;cursor:grab;">${esc(d.name)}</div>`,
+                iconSize: null,
                 iconAnchor: [0, 0]
             }),
             draggable: true
