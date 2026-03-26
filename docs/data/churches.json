@@ -1,6 +1,6 @@
 {
   "kirchenkreis": "Evangelischer Kirchenkreis Hamm",
-  "status_check_date": "2026-01",
+  "status_check_date": "2026-03",
   "gottesdienstorte": [
     {
       "name": "Pauluskirche",
@@ -103,7 +103,7 @@
         "Toilette nur im angrenzenden Restaurant"
       ],
       "website": "https://www.kg-mw.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/o3lt90u62p/ihre-trauung-in-der-pankratiuskirche",
       "photoName": "Pankratiuskirche Mark-Westtünnen.jpg"
     },
     {
@@ -239,8 +239,8 @@
         "city": "Hamm"
       },
       "coordinates": {
-        "lat": 51.645,
-        "lng": 7.73
+        "lat": 51.638,
+        "lng": 7.7432
       },
       "besonderheiten": [
         "Im historischen Ortskern Pelkum"
@@ -285,7 +285,7 @@
         "Eingeschränkt barrierefrei"
       ],
       "website": "https://www.emmaus-hamm.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/o3lt90u62p/anfrage-trauung",
       "photoName": "Kirche Berge, Emmaus-Kirchengemeinde.jpg"
     },
     {
@@ -306,7 +306,7 @@
         "Platz für bis zu 180 Personen"
       ],
       "website": "https://www.emmaus-hamm.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/o3lt90u62p/trauung-kirche-rhynern",
       "photoName": "Kirche Rhynern, Emmaus-Kirchengemeinde.jpg"
     },
     {
@@ -349,7 +349,7 @@
         "Parken am Straßenrand"
       ],
       "website": "https://www.emmaus-hamm.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/o3lt90u62p/trauung-kirche-hilbeck",
       "photoName": "Kirche Hilbeck, Emmaus-Kirchengemeinde.jpg"
     },
     {
