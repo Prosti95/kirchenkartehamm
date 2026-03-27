@@ -132,6 +132,16 @@
         .toast.info { background: #1e40af; }
         @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
+        /* Crop Preview */
+        .crop-container { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 12px; }
+        .crop-teardrop { width: 200px; height: 200px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); overflow: hidden; border: 4px solid #1e40af; background: #f0f0f0; position: relative; cursor: grab; flex-shrink: 0; }
+        .crop-teardrop.dragging { cursor: grabbing; }
+        .crop-teardrop img { position: absolute; transform-origin: 0 0; transform: rotate(45deg); pointer-events: none; user-select: none; -webkit-user-drag: none; }
+        .crop-controls { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 280px; }
+        .crop-controls label { font-size: 12px; white-space: nowrap; color: #6b7280; }
+        .crop-controls input[type=range] { flex: 1; }
+        .crop-actions { display: flex; gap: 8px; }
+
         /* Responsive */
         @media (max-width: 900px) {
             .editor-layout { flex-direction: column; }
@@ -741,12 +751,14 @@ function renderChurchDetail() {
                 📷 Bild hierher ziehen oder klicken
                 <input type="file" accept="image/*" style="display:none" id="church-photo-input">
             </div>
-            ${c.photoName && newImages[c.photoName] ? `<img src="${URL.createObjectURL(newImages[c.photoName])}" style="max-width:200px;max-height:120px;margin-top:8px;border-radius:6px;object-fit:cover;">` : ''}
+            <div id="crop-preview-area"></div>
         </div>
     `;
 
     // Setup inline photo drop zone
     setupChurchPhotoDrop();
+    // Show crop preview if photo exists
+    showCropPreview();
 }
 
 function setupChurchPhotoDrop() {
@@ -777,6 +789,187 @@ function handleChurchPhoto(file) {
         const sizeKB = Math.round(blob.size / 1024);
         toast(`Bild "${name}" zugewiesen (${sizeKB} KB)`, 'success');
     });
+}
+
+// ========== CROP PREVIEW ==========
+let _cropState = null; // { imgEl, scale, offsetX, offsetY, natW, natH }
+
+function showCropPreview() {
+    const area = document.getElementById('crop-preview-area');
+    if (!area) return;
+    const c = churches[selectedChurchIndex];
+    if (!c?.photoName) { area.innerHTML = ''; return; }
+
+    // Determine image source
+    const blob = newImages[c.photoName];
+    const src = blob ? URL.createObjectURL(blob) : `images/churches/${encodeURIComponent(c.photoName)}`;
+
+    area.innerHTML = `
+        <div class="crop-container">
+            <p style="font-size:12px;color:#6b7280;margin:0;">Vorschau: Bild im Pin verschieben & skalieren</p>
+            <div class="crop-teardrop" id="crop-teardrop">
+                <img id="crop-img" src="${src}" draggable="false">
+            </div>
+            <div class="crop-controls">
+                <label>Zoom</label>
+                <input type="range" id="crop-scale" min="100" max="400" value="150" oninput="updateCropScale(this.value)">
+            </div>
+            <div class="crop-actions">
+                <button class="btn btn-primary btn-sm" onclick="saveCrop()">✂ Zuschnitt speichern</button>
+                <button class="btn btn-secondary btn-sm" onclick="resetCrop()">↩ Zurücksetzen</button>
+            </div>
+        </div>
+    `;
+
+    const img = document.getElementById('crop-img');
+    img.onload = () => {
+        _cropState = { imgEl: img, scale: 150, offsetX: 0, offsetY: 0, natW: img.naturalWidth, natH: img.naturalHeight };
+        centerCropImage();
+        if (blob) URL.revokeObjectURL(src);
+    };
+    img.onerror = () => {
+        // Keep controls visible, just show placeholder in teardrop
+        const td = document.getElementById('crop-teardrop');
+        if (td) td.innerHTML = '<div style="transform:rotate(45deg);display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#9ca3af;font-size:12px;text-align:center;">Vorschau<br>nicht verfügbar</div>';
+        if (blob) URL.revokeObjectURL(src);
+    };
+
+    setupCropDrag();
+}
+
+function centerCropImage() {
+    if (!_cropState) return;
+    const s = _cropState;
+    const boxSize = 200; // teardrop CSS size
+    // Compute displayed size at current scale
+    const sc = s.scale / 100;
+    const aspect = s.natW / s.natH;
+    // Fit to cover the box, then apply scale
+    let dispW, dispH;
+    if (aspect >= 1) { dispH = boxSize * sc; dispW = dispH * aspect; }
+    else { dispW = boxSize * sc; dispH = dispW / aspect; }
+    // Center in the rotated container: image is rotated 45deg from top-left
+    // The visible center of the teardrop is at (boxSize/2, boxSize/2) in container coords
+    // With rotate(45deg) from origin (0,0), we need to offset so image center aligns with box center
+    s.offsetX = (boxSize - dispW) / 2;
+    s.offsetY = (boxSize - dispH) / 2;
+    s.dispW = dispW;
+    s.dispH = dispH;
+    applyCropTransform();
+}
+
+function applyCropTransform() {
+    if (!_cropState) return;
+    const s = _cropState;
+    s.imgEl.style.width = s.dispW + 'px';
+    s.imgEl.style.height = s.dispH + 'px';
+    s.imgEl.style.left = s.offsetX + 'px';
+    s.imgEl.style.top = s.offsetY + 'px';
+}
+
+function updateCropScale(val) {
+    if (!_cropState) return;
+    const oldScale = _cropState.scale;
+    _cropState.scale = parseInt(val);
+    const ratio = _cropState.scale / oldScale;
+    const boxSize = 200;
+    const cx = boxSize / 2, cy = boxSize / 2;
+    // Scale around center
+    _cropState.offsetX = cx - (cx - _cropState.offsetX) * ratio;
+    _cropState.offsetY = cy - (cy - _cropState.offsetY) * ratio;
+    const aspect = _cropState.natW / _cropState.natH;
+    const sc = _cropState.scale / 100;
+    if (aspect >= 1) { _cropState.dispH = boxSize * sc; _cropState.dispW = _cropState.dispH * aspect; }
+    else { _cropState.dispW = boxSize * sc; _cropState.dispH = _cropState.dispW / aspect; }
+    applyCropTransform();
+}
+
+function resetCrop() {
+    if (!_cropState) return;
+    _cropState.scale = 150;
+    document.getElementById('crop-scale').value = 150;
+    centerCropImage();
+}
+
+function setupCropDrag() {
+    const el = document.getElementById('crop-teardrop');
+    if (!el) return;
+    let dragging = false, startX, startY, startOX, startOY;
+
+    el.addEventListener('pointerdown', e => {
+        if (!_cropState) return;
+        dragging = true;
+        el.classList.add('dragging');
+        el.setPointerCapture(e.pointerId);
+        startX = e.clientX; startY = e.clientY;
+        startOX = _cropState.offsetX; startOY = _cropState.offsetY;
+        e.preventDefault();
+    });
+    el.addEventListener('pointermove', e => {
+        if (!dragging || !_cropState) return;
+        // The container is rotated -45deg, so we need to rotate the drag delta by +45deg
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        const cos45 = Math.SQRT1_2;
+        const rdx = dx * cos45 + dy * cos45;
+        const rdy = -dx * cos45 + dy * cos45;
+        _cropState.offsetX = startOX + rdx;
+        _cropState.offsetY = startOY + rdy;
+        applyCropTransform();
+    });
+    el.addEventListener('pointerup', () => { dragging = false; el.classList.remove('dragging'); });
+
+    // Mouse wheel zoom
+    el.addEventListener('wheel', e => {
+        e.preventDefault();
+        const slider = document.getElementById('crop-scale');
+        let val = parseInt(slider.value) + (e.deltaY < 0 ? 10 : -10);
+        val = Math.max(100, Math.min(400, val));
+        slider.value = val;
+        updateCropScale(val);
+    }, { passive: false });
+}
+
+function saveCrop() {
+    if (!_cropState) return;
+    const c = churches[selectedChurchIndex];
+    if (!c?.photoName) return;
+    const s = _cropState;
+    const boxSize = 200;
+
+    // Render the visible area to a canvas
+    // The teardrop shows a 200x200 box with the image rotated 45deg
+    // We render a square crop that matches what's visible
+    const outSize = 600; // High-res output
+    const canvas = document.createElement('canvas');
+    canvas.width = outSize;
+    canvas.height = outSize;
+    const ctx = canvas.getContext('2d');
+
+    // Replicate the CSS transforms: container rotated -45deg, image rotated +45deg
+    // Net effect: image is shown normally but clipped to the teardrop
+    // The image position in the 200x200 box is at (offsetX, offsetY) with size (dispW, dispH)
+    // After the image's own rotate(45deg), the net rotation is 0
+    // So the visible area is just the box region mapped to image coordinates
+    const scaleOut = outSize / boxSize;
+    ctx.drawImage(s.imgEl,
+        -s.offsetX * (s.natW / s.dispW), -s.offsetY * (s.natH / s.dispH),
+        boxSize * (s.natW / s.dispW), boxSize * (s.natH / s.dispH),
+        0, 0, outSize, outSize
+    );
+
+    canvas.toBlob(blob => {
+        if (!blob) { toast('Zuschnitt fehlgeschlagen', 'error'); return; }
+        const name = c.photoName.replace(/\.[^.]+$/, '.jpg');
+        newImages[name] = blob;
+        c.photoName = name;
+        renderImagesGrid();
+        document.getElementById('btn-download-images').disabled = false;
+        autoSave();
+        const sizeKB = Math.round(blob.size / 1024);
+        toast(`Zuschnitt gespeichert (${sizeKB} KB)`, 'success');
+        showCropPreview(); // Refresh preview with cropped image
+    }, 'image/jpeg', 0.9);
 }
 
 function closeDetail() {

@@ -1071,6 +1071,50 @@ test.describe('Bilder / Fotos', () => {
     await page.locator('.tab[data-tab="export"]').click();
     await expect(page.locator('.diff-item.added')).toContainText('Bild: diff-test.jpg');
   });
+
+  test('Crop-Vorschau erscheint nach Bild-Upload', async ({ page }) => {
+    await page.locator('#church-list .list-item').first().click();
+    await page.locator('#church-photo-input').setInputFiles({
+      name: 'crop-test.jpg',
+      mimeType: 'image/jpeg',
+      buffer: Buffer.alloc(500),
+    });
+    // Wait for compression to finish, then crop preview should appear
+    await expect(page.locator('#crop-preview-area .crop-teardrop')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('#crop-scale')).toBeVisible();
+    await expect(page.getByRole('button', { name: /Zuschnitt speichern/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Zurücksetzen/ })).toBeVisible();
+  });
+
+  test('Zoom-Slider ist bedienbar', async ({ page }) => {
+    await page.locator('#church-list .list-item').first().click();
+    await page.locator('#church-photo-input').setInputFiles({
+      name: 'zoom-test.jpg',
+      mimeType: 'image/jpeg',
+      buffer: Buffer.alloc(500),
+    });
+    await expect(page.locator('#crop-preview-area .crop-teardrop')).toBeVisible({ timeout: 10000 });
+    const slider = page.locator('#crop-scale');
+    await expect(slider).toBeVisible();
+    expect(await slider.inputValue()).toBe('150');
+    await slider.fill('300');
+    await slider.dispatchEvent('input');
+    expect(await slider.inputValue()).toBe('300');
+  });
+
+  test('Zurücksetzen setzt Zoom auf Standardwert', async ({ page }) => {
+    await page.locator('#church-list .list-item').first().click();
+    await page.locator('#church-photo-input').setInputFiles({
+      name: 'reset-test.jpg',
+      mimeType: 'image/jpeg',
+      buffer: Buffer.alloc(500),
+    });
+    await expect(page.locator('#crop-preview-area .crop-teardrop')).toBeVisible({ timeout: 10000 });
+    await page.locator('#crop-scale').fill('300');
+    await page.locator('#crop-scale').dispatchEvent('input');
+    await page.getByRole('button', { name: /Zurücksetzen/ }).click();
+    expect(await page.locator('#crop-scale').inputValue()).toBe('150');
+  });
 });
 
 // ============================================================
