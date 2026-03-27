@@ -962,7 +962,6 @@ function saveCrop() {
         autoSave();
         const sizeKB = Math.round(blob.size / 1024);
         toast(`Zuschnitt gespeichert (${sizeKB} KB)`, 'success');
-        showCropPreview(); // Refresh preview with cropped image
     }, 'image/jpeg', 0.9);
 }
 
