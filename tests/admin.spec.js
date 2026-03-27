@@ -2047,6 +2047,8 @@ test.describe('Änderungen verwerfen', () => {
     await page.locator('#images-file-input').setInputFiles({
       name: 'test.jpg', mimeType: 'image/jpeg', buffer
     });
+    // Wait for async compression to finish
+    await expect(page.locator('#images-grid .image-card')).toHaveCount(1);
     expect(await page.evaluate(() => Object.keys(newImages).length)).toBe(1);
 
     // Verwerfen
@@ -2173,6 +2175,8 @@ test.describe('Einzelne Änderung rückgängig', () => {
     await page.locator('#images-file-input').setInputFiles({
       name: 'revert-test.jpg', mimeType: 'image/jpeg', buffer
     });
+    // Wait for async compression to finish
+    await expect(page.locator('#images-grid .image-card')).toHaveCount(1);
 
     await page.locator('.tab[data-tab="export"]').click();
     const imageDiff = page.locator('.diff-item', { hasText: 'Bild:' });
