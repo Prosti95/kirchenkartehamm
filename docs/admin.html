@@ -793,6 +793,7 @@ function handleChurchPhoto(file) {
 
 // ========== CROP PREVIEW ==========
 var _cropState = null; // { imgEl, scale, panX, panY, natW, natH, coverW, coverH }
+var _cropOriginals = {}; // { "dateiname.jpg": Blob } — Originale vor dem ersten Crop
 
 function showCropPreview() {
     const area = document.getElementById('crop-preview-area');
@@ -869,6 +870,17 @@ function updateCropScale(val) {
 
 function resetCrop() {
     if (!_cropState) return;
+    const c = churches[selectedChurchIndex];
+    // Original wiederherstellen, falls vorhanden
+    if (c?.photoName && _cropOriginals[c.photoName]) {
+        newImages[c.photoName] = _cropOriginals[c.photoName];
+        delete _cropOriginals[c.photoName];
+        renderImagesGrid();
+        autoSave();
+        showCropPreview();
+        toast('Original wiederhergestellt', 'info');
+        return;
+    }
     _cropState.scale = 150;
     _cropState.panX = 0;
     _cropState.panY = 0;
@@ -955,6 +967,8 @@ function saveCrop() {
     canvas.toBlob(blob => {
         if (!blob) { toast('Zuschnitt fehlgeschlagen', 'error'); return; }
         const name = c.photoName.replace(/\.[^.]+$/, '.jpg');
+        // Original sichern vor dem ersten Crop
+        if (!_cropOriginals[name] && newImages[name]) _cropOriginals[name] = newImages[name];
         newImages[name] = blob;
         c.photoName = name;
         renderImagesGrid();
@@ -962,6 +976,7 @@ function saveCrop() {
         autoSave();
         const sizeKB = Math.round(blob.size / 1024);
         toast(`Zuschnitt gespeichert (${sizeKB} KB)`, 'success');
+        showCropPreview(); // Zeigt das neue zugeschnittene Bild als Bestätigung
     }, 'image/jpeg', 0.9);
 }
 
