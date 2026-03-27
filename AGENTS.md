@@ -76,7 +76,7 @@ Alle mit `var` deklariert (nicht `let`), damit sie in Playwright via `page.evalu
 | `churchMarkers` | Array | Draggable Kirchen-Marker |
 | `labelMarkers` | Array | Draggable Label-Marker |
 | `pinMode` | Boolean | Pin-Modus (Klick auf Karte = neue Kirche) |
-| `_cropState` | Object/null | Zustand der Bild-Zuschnitt-Vorschau |
+| `_cropState` | Object/null | Zustand der Bild-Zuschnitt-Vorschau (imgEl, scale, panX, panY, natW, natH, coverW, coverH) |
 | `window._currentDiffs` | Array | Aktuell angezeigte Diff-Einträge (für Einzelrückgängig) |
 
 ---
@@ -222,8 +222,8 @@ Ohne Phase 2 würde eine Namensänderung als "Kirche gelöscht + neue Kirche hin
 Der Crop-Container ist `-45°` rotiert → Mausbewegungen müssen um `+45°` zurückgedreht werden:
 ```javascript
 const cos45 = Math.SQRT1_2;
-const rdx = dx * cos45 + dy * cos45;
-const rdy = -dx * cos45 + dy * cos45;
+const rdx = (dx - dy) * cos45;
+const rdy = (dx + dy) * cos45;
 ```
 
 ### 5. Leaflet divIcon braucht `iconSize: null`
