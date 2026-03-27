@@ -812,7 +812,7 @@ function showCropPreview() {
             </div>
             <div class="crop-controls">
                 <label>Zoom</label>
-                <input type="range" id="crop-scale" min="100" max="400" value="150" oninput="updateCropScale(this.value)">
+                <input type="range" id="crop-scale" min="150" max="400" value="150" oninput="updateCropScale(this.value)">
             </div>
             <div class="crop-actions">
                 <button class="btn btn-primary btn-sm" onclick="saveCrop()">✂ Zuschnitt speichern</button>
@@ -907,7 +907,7 @@ function setupCropDrag() {
         e.preventDefault();
         const slider = document.getElementById('crop-scale');
         let val = parseInt(slider.value) + (e.deltaY < 0 ? 10 : -10);
-        val = Math.max(100, Math.min(400, val));
+        val = Math.max(150, Math.min(400, val));
         slider.value = val;
         updateCropScale(val);
     }, { passive: false });
@@ -919,26 +919,38 @@ function saveCrop() {
     if (!c?.photoName) return;
     const s = _cropState;
     const boxSize = 200;
-    const sc = s.scale / 100;
+    const S = s.scale / 100;
+    const cos45 = Math.SQRT1_2;
 
-    // Compute displayed dimensions and position
-    const dispW = s.coverW * sc;
-    const dispH = s.coverH * sc;
-    const imgLeft = (boxSize - dispW) / 2 + s.panX;
-    const imgTop = (boxSize - dispH) / 2 + s.panY;
+    // Convert container-space pan to screen-space pan
+    // (container is rotated -45deg, so pan maps diagonally to screen)
+    const sPX = (s.panX + s.panY) * cos45;
+    const sPY = (s.panY - s.panX) * cos45;
 
-    // Map the visible box to source image coordinates (rotation cancels out: -45° container + 45° image)
+    // Display dimensions
+    const dispW = s.coverW * S;
+    const dispH = s.coverH * S;
+
+    // Visible square side in image pixels (always square due to cover sizing)
+    const viewSide = boxSize * s.natW / dispW;
+
+    // Expand by 1.5x to compensate for public map's scale(1.5)
+    let savedSide = Math.min(viewSide * 1.5, Math.min(s.natW, s.natH));
+
+    // Crop center in image-pixel space
+    const cx = s.natW / 2 - sPX * s.natW / dispW;
+    const cy = s.natH / 2 - sPY * s.natH / dispH;
+
+    // Crop rectangle, clamped to image bounds
+    let srcX = Math.max(0, Math.min(cx - savedSide / 2, s.natW - savedSide));
+    let srcY = Math.max(0, Math.min(cy - savedSide / 2, s.natH - savedSide));
+
     const outSize = 600;
     const canvas = document.createElement('canvas');
     canvas.width = outSize;
     canvas.height = outSize;
     const ctx = canvas.getContext('2d');
-
-    const srcX = -imgLeft * (s.natW / dispW);
-    const srcY = -imgTop * (s.natH / dispH);
-    const srcW = boxSize * (s.natW / dispW);
-    const srcH = boxSize * (s.natH / dispH);
-    ctx.drawImage(s.imgEl, srcX, srcY, srcW, srcH, 0, 0, outSize, outSize);
+    ctx.drawImage(s.imgEl, srcX, srcY, savedSide, savedSide, 0, 0, outSize, outSize);
 
     canvas.toBlob(blob => {
         if (!blob) { toast('Zuschnitt fehlgeschlagen', 'error'); return; }
