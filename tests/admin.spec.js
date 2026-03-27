@@ -1115,6 +1115,26 @@ test.describe('Bilder / Fotos', () => {
     await page.getByRole('button', { name: /Zurücksetzen/ }).click();
     expect(await page.locator('#crop-scale').inputValue()).toBe('150');
   });
+
+  test('Zurücksetzen stellt Original nach Crop wieder her', async ({ page }) => {
+    await page.locator('#church-list .list-item').first().click();
+    await page.locator('#church-photo-input').setInputFiles({
+      name: 'orig-test.jpg',
+      mimeType: 'image/jpeg',
+      buffer: Buffer.alloc(500),
+    });
+    await expect(page.locator('#crop-preview-area .crop-teardrop')).toBeVisible({ timeout: 10000 });
+    const sizeBefore = await page.evaluate(() => newImages[Object.keys(newImages)[0]].size);
+    // Zuschnitt speichern
+    await page.getByRole('button', { name: /Zuschnitt speichern/ }).click();
+    await page.waitForFunction(() => document.querySelector('.toast.success'));
+    const sizeAfterCrop = await page.evaluate(() => newImages[Object.keys(newImages)[0]].size);
+    // Original wiederherstellen
+    await page.getByRole('button', { name: /Zurücksetzen/ }).click();
+    await page.waitForFunction(() => document.querySelector('.toast.info'));
+    const sizeAfterReset = await page.evaluate(() => newImages[Object.keys(newImages)[0]].size);
+    expect(sizeAfterReset).toBe(sizeBefore);
+  });
 });
 
 // ============================================================
