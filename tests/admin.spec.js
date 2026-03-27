@@ -1363,6 +1363,8 @@ test.describe('Unsaved Changes & State', () => {
     await page.locator('#images-file-input').setInputFiles({
       name: 'img.jpg', mimeType: 'image/jpeg', buffer: Buffer.alloc(500),
     });
+    // Wait for async compression to finish (card appears in grid)
+    await expect(page.locator('#images-grid .image-card')).toHaveCount(1);
     const has = await page.evaluate(() => hasUnsavedChanges());
     expect(has).toBe(true);
   });
