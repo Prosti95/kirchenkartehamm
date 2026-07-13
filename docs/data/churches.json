@@ -1,6 +1,6 @@
 {
   "kirchenkreis": "Evangelischer Kirchenkreis Hamm",
-  "status_check_date": "2026-03",
+  "status_check_date": "2026-07",
   "gottesdienstorte": [
     {
       "name": "Pauluskirche",
@@ -19,7 +19,7 @@
         "Kostenpflichtige Parkplätze auf dem nahegelegenen Santa-Monica-Platz"
       ],
       "website": "https://www.evangelische-kirchengemeinde-hamm.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/gkxjeudqs9/ihre-trauung-in-der-pauluskirche-hamm",
       "photoName": "Pauluskirche Hamm.jpg"
     },
     {
@@ -40,7 +40,7 @@
         "Parkmöglichkeiten im Umfeld vorhanden"
       ],
       "website": "https://www.evangelische-kirchengemeinde-hamm.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/gkxjeudqs9/ihre-trauung-in-der-christuskirche",
       "photoName": "Christuskirche Hamm.jpg"
     },
     {
@@ -80,7 +80,7 @@
         "Angeschlossenes Gemeindezentrum"
       ],
       "website": "https://www.evangelische-kirchengemeinde-hamm.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/gkxjeudqs9/ihre-trauung-in-der-johanneskirche",
       "photoName": "Johanneskirche Hamm.jpg"
     },
     {
@@ -123,7 +123,7 @@
         "Bis zu 300 Personen"
       ],
       "website": "https://www.trinitatis-hamm.ekvw.de/",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/o3lt90u62p/trauung-erloserkirche",
       "photoName": "Erlöserkirche Werries - Trinitatis-Kirchengemeinde.jpg"
     },
     {
@@ -143,7 +143,7 @@
         "Bis zu 150 Personen"
       ],
       "website": "https://www.trinitatis-hamm.ekvw.de/",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/o3lt90u62p/ihre-trauung-in-der-uentroper-dorfkirche",
       "photoName": "Uentroper Dorfkirche - Trinitatis-Kirchengemeinde.jpg"
     },
     {
@@ -164,7 +164,7 @@
         "Bis zu 350 Personen"
       ],
       "website": "https://evangelisch-in-heessen.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/gkxjeudqs9/ihre-trauung-im-gellerthaus",
       "photoName": "Gellert-Haus Heessen.jpg"
     },
     {
@@ -185,7 +185,7 @@
         "Barrierefrei"
       ],
       "website": "https://www.ev-bockum-hoevel.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/ilfoa1g0a9/ihre-trauung-in-der-kreuzkirche",
       "photoName": "Kreuzkirche Bockum-Hövel.jpg"
     },
     {
@@ -205,11 +205,11 @@
         "Barrierefrei"
       ],
       "website": "https://www.ev-bockum-hoevel.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/ilfoa1g0a9/ihre-trauung-in-der-auferstehungskirche",
       "photoName": "Auferstehungskirche Bockum-Hövel.jpg"
     },
     {
-      "name": "St. Viktor (Ev. Kirche Herringen)",
+      "name": "St. Victor (Ev. Kirche Herringen)",
       "stadtteil": "Herringen",
       "address": {
         "street": "Fangstraße 3",
@@ -227,7 +227,7 @@
         "Bis zu 250 Personen"
       ],
       "website": "https://www.st-victor-herringen.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/l7xt783tsf/ihre-trauung-in-st-victor",
       "photoName": "St. Victor-Kirche Herringen.jpg"
     },
     {
@@ -246,7 +246,7 @@
         "Im historischen Ortskern Pelkum"
       ],
       "website": "https://www.evkirche-pelkum-wiescherhoefen.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/l7xt783tsf/ihre-trauung-in-der-jakobuskirche",
       "photoName": "Jakobuskirche Pelkum-Wiescherhöfen.jpg"
     },
     {
@@ -265,7 +265,7 @@
         "Direkt am Friedhof gelegen"
       ],
       "website": "https://www.evkirche-pelkum-wiescherhoefen.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/l7xt783tsf/ihre-trauung-in-der-johanneskirche",
       "photoName": "Friedenskirche Pelkum-Wiescherhöfen.jpg"
     },
     {
@@ -369,7 +369,7 @@
         "Großes Gemeindezentrum angeschlossen"
       ],
       "website": "https://www.evkirchewerne.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/ilfoa1g0a9/ihre-trauung-in-der-martin-luther-kirche-werne",
       "photoName": "Martin-Luther-Kirche Werne.jpg"
     },
     {
@@ -385,7 +385,7 @@
         "lng": 7.658
       },
       "website": "https://www.evkirchewerne.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/ilfoa1g0a9/ihre-trauung-in-der-auferstehungskirche-herbern",
       "photoName": "Auferstehungskirche Herbern - Kgm. Werne.jpg"
     },
     {
@@ -407,7 +407,7 @@
         "Barrierefrei"
       ],
       "website": "https://www.evkircheahlen.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/gocrzlkr9h/pauluskirche-evangelische-trauung",
       "photoName": "Pauluskirche Ahlen.jpg"
     },
     {
@@ -428,7 +428,7 @@
         "lng": 7.8872
       },
       "website": "https://www.evkircheahlen.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/gocrzlkr9h/trauung",
       "photoName": ""
     },
     {
@@ -449,7 +449,7 @@
         "lng": 7.9257
       },
       "website": "https://www.evkircheahlen.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/gocrzlkr9h/paul-gerhardt-kirche-evangelische-trauung",
       "photoName": "Paul-Gerhardt-Kirche Ahlen.jpg"
     },
     {
@@ -465,7 +465,7 @@
         "lng": 7.8266
       },
       "website": "https://www.ev-sendenhorst-vorhelm.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/gocrzlkr9h/ihre-trauung-in-der-friedenskirche-sendenhorst",
       "photoName": "Friedenskirche Sendenhorst.jpg"
     },
     {
@@ -485,8 +485,8 @@
         "Platz für bis zu 600 Personen",
         "Barrierefrei"
       ],
-      "website": "https://www.evangelische-kirchengemeinde-boenen.de",
-      "buchungsLink": "",
+      "website": "https://www.evangelische-kirchengemeinde-boenen.de/orte-menschen/unsere-kirchen--gemeindehaeuser",
+      "buchungsLink": "https://request.churchdesk.com/l7xt783tsf/ihre-trauung-in-der-alten-kirche-bonen",
       "photoName": "Alte Kirche Bönen.jpg"
     },
     {
@@ -502,13 +502,13 @@
         "lng": 7.8067
       },
       "besonderheiten": [
-        "Einzigartiger Fachwerkturm",
+        "Platz für bis zu 200 Personen",
         "Ausreichend Parkplätze am nahegelegenen Friedhof",
         "Barrierefrei",
-        "Platz für bis zu 200 Personen"
+        ""
       ],
-      "website": "https://www.evangelische-kirchengemeinde-boenen.de",
-      "buchungsLink": "",
+      "website": "https://www.evangelische-kirchengemeinde-boenen.de/orte-menschen/unsere-kirchen--gemeindehaeuser",
+      "buchungsLink": "https://request.churchdesk.com/l7xt783tsf/ihre-trauung-in-der-evangelischen-kirche-bonen-flierich",
       "photoName": "Kirche Flierich, Bönen.jpg"
     },
     {
@@ -527,7 +527,7 @@
         "Nutzung als ThomasKulturKirche"
       ],
       "website": "https://www.evkirche-pelkum-wiescherhoefen.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/l7xt783tsf/ihre-trauung-in-der-thomaskirche",
       "photoName": "Thomaskirche Pelkum-Wiescherhöfen.jpg"
     },
     {
@@ -566,14 +566,14 @@
         "Barrierefrei"
       ],
       "website": "https://www.ev-bockum-hoevel.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/ilfoa1g0a9/ihre-trauung-im-martin-luther-zentrum",
       "photoName": "Katharina-Luther-Centrum Bockum-Hövel.jpg"
     },
     {
-      "name": "Gemeindezentrum Evenkamp",
+      "name": "Dietrich-Bonhoeffer-Zentrum",
       "stadtteil": "Werne",
       "address": {
-        "street": "Ostring 66",
+        "street": "Ostring 70",
         "zipCode": "59368",
         "city": "Werne"
       },
@@ -582,7 +582,7 @@
         "lng": 7.65167602609238
       },
       "website": "https://www.evkirchewerne.de",
-      "buchungsLink": "",
+      "buchungsLink": "https://request.churchdesk.com/ilfoa1g0a9/ihre-trauung-im-dietrich-bonhoeffer-zentrum-werne",
       "photoName": "Gemeindezentrum Evenkamp Kgm. Werne.jpg"
     },
     {
@@ -601,8 +601,8 @@
         "Parkmöglichkeiten an der Anton-Voss-Straße",
         "Barrierefrei"
       ],
-      "website": "https://www.evkirchewerne.de",
-      "buchungsLink": "",
+      "website": "https://www.evangelische-kirchengemeinde-hamm.de/orte/erloeserzentrum",
+      "buchungsLink": "https://request.churchdesk.com/gkxjeudqs9/ihre-trauung-im-erloserzentrum",
       "photoName": "Hamm - Erlöserzentrum 24.jpg"
     }
   ]
