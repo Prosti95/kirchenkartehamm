@@ -4,8 +4,8 @@ Eine interaktive Karte aller Trauorte im Evangelischen Kirchenkreis Hamm.
 
 ## 🌐 Links
 
-- **Karte:** https://prosti95.github.io/kirchenkartehamm/
-- **Admin-Tool:** https://prosti95.github.io/kirchenkartehamm/admin.html
+- **Karte:** https://kirchenkreishamm.github.io/kirchenkartehamm/
+- **Admin-Tool:** https://kirchenkreishamm.github.io/kirchenkartehamm/admin.html
 
 ## ✨ Features
 
@@ -95,7 +95,7 @@ Die Karte kann z. B. in ChurchDesk oder andere Website-Baukästen eingebunden we
 
 ```html
 <iframe 
-    src="https://prosti95.github.io/kirchenkartehamm/" 
+    src="https://kirchenkreishamm.github.io/kirchenkartehamm/" 
     width="100%" 
     height="600"
     style="border: 1px solid #ddd; border-radius: 8px;"
